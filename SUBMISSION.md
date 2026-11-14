@@ -32,7 +32,7 @@ LIFELINE is a Marswalk planner that applies the Apollo rule "never go farther th
 2. Ride-back: if a suit fails, the emergency oxygen must cover the padded ride home.
 3. Time in suit: the whole plan must end inside the time limit (4.25 h, a team assumption).
 
-**The mission.** The habitat sits on Curiosity's sol 3038 position, chosen because the ground is flat. Stop A (Altadena) and stop B (Monte Grande) are Curiosity drill sites inside the boxwork. Stop C is a new site: a hollow inside the boxwork about 90 m off the rover's path, where wheels struggle on steep edges and boots do not. No ground image of stop C exists yet. This is why a human goes.
+**The mission.** The habitat sits on Curiosity's sol 3038 position, chosen because the ground is flat. Stop A (Altadena) and stop B (Monte Grande) are Curiosity drill sites inside the boxwork. Stop C is a new site: a hollow inside the boxwork that Curiosity never reached; its route passes about 60 m away. Wheels struggle on its steep edges; boots do not. No ground image of stop C exists yet. This is why a human goes.
 
 **How it works.** LIFELINE computes the fastest walking time home from every 30 m cell of the terrain (Dijkstra path finding, 8 directions, walking speed reduced on slopes), then tracks how the suit reserve runs down with Apollo activity rates for driving, working and walking. The margin field on the map turns from green to yellow to red as the reserve drops. Decision gates at each stop switch to plan B (skip the lowest-science stop) or plan C (go home) when the margin ahead falls below the gate. A Why GO / Why NO-GO panel names the tightest limit and lists fixes; lowering the safety pad is never offered as a fix.
 

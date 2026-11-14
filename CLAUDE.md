@@ -56,7 +56,7 @@ Out of scope, do not add: helmet HUD, satellite imagery basemap, wind, fatigue m
 | Habitat | −4.73384 | 137.40960 | Curiosity waypoint sol 3038, flat (0.6° along track) |
 | A Altadena | −4.79985 | 137.38354 | Curiosity drill site, sol 4564 |
 | B Monte Grande | −4.80784 | 137.38104 | Curiosity drill sites Valle de la Luna (hollow) and Nevado Sajama (ridge) |
-| C new hollow | −4.80640 | 137.38150 | New site ~90 m off the rover path inside confirmed boxwork |
+| C new hollow | −4.80640 | 137.38150 | New site inside the boxwork, never reached by Curiosity: 90 m from the path up to sol 4687, 57 m since the drive of sols 4810-4813 (checked 14 Nov against the live waypoint file) |
 
 A 3.5 km-west stop C was checked and rejected (no hi-res coverage, butte in the way, no boxwork seen). A closer habitat (sol 4456, −4.78771, 137.39224) is the fallback if ever needed.
 
@@ -81,6 +81,7 @@ No build step. Plain scripts, `var` globals in data/mission files so the test ru
 - Terrain: Persaud, Putri & Muller (2021), 30-m HRSC DTM Mosaic of Gale Crater, Zenodo doi:10.5281/zenodo.5808354, CC BY 4.0. File `hrsc_km09_h1938_h1927_h1916-dtm-mosaic.tif`: uncompressed float32, little-endian, 7584 x 10275, one row per strip, strip 0 at byte 82821, 30336 bytes per row, nodata −32768. Equidistant cylindrical, sphere R = 3,396,190 m, tiepoint x0 = 8054872.398099138, y0 = −176868.30708358268. Our slice: rows 3420 to 3640, columns 2893 to 3051, read with HTTP range requests, stored as uint16 = round((z + 5000) × 5).
 - Rover: NASA MMGIS `https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints.json` (fields lat, lon, elev_geoid, sol).
 - Validation against data: DEM vs 885 rover altitudes, RMSE 11.7 m over 823 m of relief.
+- Raw data verified 14 Nov (`tests/verify-raw-data.mjs`, report in `docs/verification/README.md`): all 35,139 terrain cells equal the Zenodo file within 0.1 m; habitat = sol 3038 waypoint, A = sol 4560-4570 stop (drill sol 4564), B = sol 4687 waypoint where the B image was taken; C never visited, 57 m from the path since sols 4810-4813; C sits inside the polygonal boxwork network on HiRISE ESP_087149_1750 (browse resolution).
 
 ## Model defaults and which are sourced
 

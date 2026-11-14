@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#000">
+<canvas id="c"></canvas>
+<script src="../../data/rover-track.js"></script><script src="../../js/mission.js"></script>
+<script>
+// HiRISE ESP_087149_1750 RED, equirectangular, from the PDS label: MAP_RESOLUTION 237098.79009322 pix/deg,
+// LINE_PROJECTION_OFFSET -1126085.5, SAMPLE_PROJECTION_OFFSET 10107157.5, CENTER_LONGITUDE 180. Browse = 2048/24370 of full size.
+const RES=237098.79009322,K=2048/24370;
+const px=(lat,lon)=>({x:(10107157.5+(lon-180)*RES)*K,y:(-1126085.5-lat*RES)*K});
+const X0=40,Y0=960,WW=380,HH=380,S=3;
+const img=new Image();img.onload=()=>{const c=document.getElementById('c');c.width=WW*S;c.height=HH*S+60;const g=c.getContext('2d');
+ g.imageSmoothingEnabled=true;g.drawImage(img,X0,Y0,WW,HH,0,0,WW*S,HH*S);
+ const P=(lat,lon)=>{const p=px(lat,lon);return {x:(p.x-X0)*S,y:(p.y-Y0)*S}};
+ // rover track: sorted by input order
+ g.strokeStyle='rgba(255,255,255,.85)';g.setLineDash([6,5]);g.lineWidth=2;g.beginPath();let first=true;
+ for(const r of ROVER){const q=P(r[0],r[1]);if(q.x<-50||q.y<-50||q.x>WW*S+50||q.y>HH*S+50){first=true;continue}if(first){g.moveTo(q.x,q.y);first=false}else g.lineTo(q.x,q.y)}g.stroke();g.setLineDash([]);
+ for(const s of MISSION.stops){const q=P(s.lat,s.lon);g.strokeStyle=s.id==='C'?'#3DD6F5':'#F2B01E';g.lineWidth=3;g.beginPath();g.arc(q.x,q.y,s.id==='C'?22:14,0,7);g.stroke();
+   g.font='bold 26px sans-serif';g.fillStyle=g.strokeStyle;g.fillText(s.id,q.x+(s.id==='B'?-40:26),q.y+(s.id==='B'?24:-14))}
+ // scale bar 200 m = 200/0.25*K browse px
+ const L=200/0.25*K*S;g.fillStyle='#000';g.fillRect(0,HH*S,WW*S,60);g.fillStyle='#fff';g.fillRect(20,HH*S+20,L,8);g.font='20px sans-serif';g.fillText('200 m',30+L,HH*S+30);
+ g.fillText('HiRISE ESP_087149_1750 (28 Feb 2025), browse ~3 m/px, north up. Dashed: Curiosity waypoints (NASA). A, B: drill sites. C: stop C.',20,HH*S+52);
+ document.title='done';};
+img.src="https://hirise.lpl.arizona.edu/PDS/EXTRAS/RDR/ESP/ORB_087100_087199/ESP_087149_1750/ESP_087149_1750_RED.browse.jpg";img.crossOrigin="anonymous";
+</script>

@@ -28,7 +28,7 @@ On the Moon, Apollo crews followed one rule: never drive farther from the lunar 
 | Habitat | −4.73384 | 137.40960 | Curiosity's position on sol 3038, flat ground (0.6° along the rover track) |
 | Stop A, Altadena | −4.79985 | 137.38354 | Curiosity drill site, sol 4564, edge of the boxwork |
 | Stop B, Monte Grande | −4.80784 | 137.38104 | Curiosity drill sites in a hollow (Valle de la Luna) and on the ridge beside it (Nevado Sajama) |
-| Stop C | −4.80640 | 137.38150 | New site: a hollow inside the boxwork about 90 m off the rover's path |
+| Stop C | −4.80640 | 137.38150 | New site: a hollow inside the boxwork that Curiosity never reached; its route passes about 60 m away (57 m on sols 4810 to 4813; 90 m up to sol 4687) |
 
 The crew drives to the farthest stop first and works back, so the walk home gets shorter as consumables run down. Stops A and B are where the rover has been; stop C is where a human goes because wheels struggle on steep hollow edges.
 
@@ -76,6 +76,7 @@ Run `node tests/run-tests.js`. The same ten checks run live in the page's Valida
 Two more test scripts back the numbers and the page itself:
 
 - `node tests/audit-numbers.js` recomputes every number quoted in this README, the submission text and the slides (crisis table, running-late table, sensitivity) from the model.
+- `node tests/verify-raw-data.mjs` checks the raw data against the original sources: every terrain cell against the Zenodo GeoTIFF, and the habitat and stops against NASA's current Curiosity waypoint file. Results and the stop C HiRISE check are in [`docs/verification/`](docs/verification/README.md).
 - `node tests/edge-browser.mjs` (serve the folder on port 8790 first) drives the real page in headless Chrome through every crisis combination, repeated delays, out-of-range inputs and dragged stops, and fails on any console error, on "NaN", "undefined" or "Infinity" in the page, or on a verdict that differs from an independent run of the model.
 
 | Check | Result |
