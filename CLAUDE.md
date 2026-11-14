@@ -1,0 +1,109 @@
+# CLAUDE.md: LIFELINE handoff
+
+Read this first. It carries every decision made so far, so you do not need to re-ask the team.
+
+## Who and when
+
+- Team **Six Seven** (5 people, 3 laptops, 1 iPad), NASA Space Apps Challenge 2026, **Nablus local event** (An-Najah University).
+- Team contact: Iyad. **Talk to the team in Arabic.** Everything the judges see (site, README, slides, submission page) is in **English**.
+- Challenge: **Interplanetary Survival Guide: Martian Map** (layered map from several NASA missions to plan a safe Marswalk with new science).
+- Target award category: **Best Mission Concept**. Realistic goal: win locally and be nominated for global judging.
+- **Deadline: Sunday 15 Nov 2026, 23:59 Nablus time (UTC+2).** Plan: first full submission by 16:00, final by 20:00. No new features after Sunday noon.
+- Local judges **read the slides and open the demo; there is no live pitch or Q&A.** Everything must explain itself.
+
+## Live links
+
+- Site (GitHub Pages, main branch, root): https://faressalameh22.github.io/lifeline-marswalk/
+- Repo: https://github.com/faressalameh22/lifeline-marswalk
+- Verified live on 14 Nov 20:36: verdict GO FOR EVA, Validation panel 10/10 PASS.
+
+## Submission rules that can disqualify us
+
+- Demo is either **≤7 slides (title included)** or a **≤30 s video**. We chose **slides**.
+- All submission text and linked material in **English**.
+- Every link public, no login.
+- NASA data must be used (we do). Partner-agency data is a plus (ESA HRSC terrain).
+- AI use must be disclosed (README has a section; repeat it on the submission page). AI images need a visible watermark and must not use NASA logos or branding. Do not put "NASA" in names or logos.
+- All team members registered to the same local event.
+
+Judging criteria (each 1 to 5): Influence/Impact, Creativity, Validity, Relevance, Presentation.
+
+## What won before (our own study of 40 global winners, 2022 to 2025)
+
+1. A working thing people can try beats an idea (24 of 40).
+2. A named user making a named decision.
+3. Named NASA datasets turned into one clear output.
+4. Concepts tested against failure (Best Mission Concept winners did this).
+5. Awards go by category, not challenge.
+
+Every design choice below follows these.
+
+## The product (locked)
+
+LIFELINE applies the Apollo rule "never go farther than you can walk home" to Mars, using three limits:
+1. **Walk-back** if the rover fails (reserve vs padded walking time home over real terrain).
+2. **Ride-back** if a suit fails (0.95 h emergency oxygen, emergency rover 10 km/h, from Apollo planning).
+3. **Time in suit** (4.25 h, team assumption).
+
+Features in the site: margin field on the map, time slider, crises (rover fails, suit failure, crew injured, solar storm, combinable), running late, plan ladder A/B/C/D, decision gates at each stop, Why GO / Why NO-GO panel with fixes (never lowers the safety pad), backup card (leave-by times), draggable stops, science value per stop, Plan/Walk (wrist display) views, Validation panel with sensitivity chart.
+
+Out of scope, do not add: helmet HUD, satellite imagery basemap, wind, fatigue model, crew size, multiple pages, backend, accounts.
+
+## The mission (locked)
+
+| Point | Lat | Lon | Source |
+|---|---|---|---|
+| Habitat | −4.73384 | 137.40960 | Curiosity waypoint sol 3038, flat (0.6° along track) |
+| A Altadena | −4.79985 | 137.38354 | Curiosity drill site, sol 4564 |
+| B Monte Grande | −4.80784 | 137.38104 | Curiosity drill sites Valle de la Luna (hollow) and Nevado Sajama (ridge) |
+| C new hollow | −4.80640 | 137.38150 | New site ~90 m off the rover path inside confirmed boxwork |
+
+A 3.5 km-west stop C was checked and rejected (no hi-res coverage, butte in the way, no boxwork seen). A closer habitat (sol 4456, −4.78771, 137.39224) is the fallback if ever needed.
+
+## Code layout
+
+```
+index.html           markup and CSS (dark theme; colors: bg #0F1419, rust #C1440E, route #3DD6F5, safe/tight/danger #2EAD6B/#F2B01E/#D9342B)
+js/mission.js        habitat, stops, DEFAULTS (single source of default assumptions)
+js/model.js          terrain decode, Dijkstra, plans, gates, crises, validation (no DOM)
+js/app.js            UI only
+data/terrain.js      HRSC 30 m slice, 159 x 221 cells
+data/rover-track.js  885 Curiosity waypoints [lat, lon, elev]
+tests/run-tests.js   node tests/run-tests.js  (must print 10 of 10 passed)
+```
+
+No build step. Plain scripts, `var` globals in data/mission files so the test runner can load them with `vm`.
+
+**Always run `node tests/run-tests.js` before committing.** If a change makes a check fail, fix the change, not the check.
+
+## Data provenance
+
+- Terrain: Persaud, Putri & Muller (2021), 30-m HRSC DTM Mosaic of Gale Crater, Zenodo doi:10.5281/zenodo.5808354, CC BY 4.0. File `hrsc_km09_h1938_h1927_h1916-dtm-mosaic.tif`: uncompressed float32, little-endian, 7584 x 10275, one row per strip, strip 0 at byte 82821, 30336 bytes per row, nodata −32768. Equidistant cylindrical, sphere R = 3,396,190 m, tiepoint x0 = 8054872.398099138, y0 = −176868.30708358268. Our slice: rows 3420 to 3640, columns 2893 to 3051, read with HTTP range requests, stored as uint16 = round((z + 5000) × 5).
+- Rover: NASA MMGIS `https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints.json` (fields lat, lon, elev_geoid, sol).
+- Validation against data: DEM vs 885 rover altitudes, RMSE 11.7 m over 823 m of relief.
+
+## Model defaults and which are sourced
+
+Sourced (Apollo traverse planning): activity rates drive 0.67 / work 1.00 / walk 1.14 (700/1050/1200 BTU/h), 20% pad, 0.95 h emergency oxygen, 10 km/h emergency rover, Apollo walking radius 3.1 km (our model reproduces 3.12 km). Surface dose 0.67 mSv/day (Curiosity RAD, Hassler et al. 2014).
+
+**Team assumptions, still unsourced:** walking speed 2.5 km/h, suit O2 8 h and cooling water 7.5 h, payload effect, injured factor, 4.25 h time in suit, 30 min storm warning.
+
+Sensitivity on real terrain: −20% suit capacity → margin −34 min (NO-GO); −20% walking speed → −10 min (NO-GO). Finding sources for these two is the top open research task. If none are found, say so openly on a slide.
+
+## Current results (default assumptions)
+
+Verdict GO. Tightest limit: suit failure at stop B, ride home 35 min (padded 42) vs 57 min emergency O2 → 15 min spare. Rover-failure worst case 37 min. Plan 3 h 42 vs 4.25 h. Running late 15 to 30 min at B → gate switches to plan B (skips A, lowest science).
+
+## Remaining work, in priority order
+
+1. **Slides (7, English)**: title + team + challenge; the problem; the idea (Apollo rule on Mars, three limits); the tool (screenshots: map, crisis, Why panel); failure tested (crises, plan ladder, gates); data and validation (Apollo 3.12 vs 3.1 km, DEM vs rover 11.7 m, 444 simulated failures, sensitivity chart, honest assumptions); impact and next steps (why not a physical rope; helmet display as future work; THEMIS, REMS). Every title is a full sentence stating the takeaway. Must read without a presenter.
+2. **Submission page text (English)**: project name, high-level summary, detailed description, NASA data used, Space Agency Partner and other data (ESA HRSC), use of AI, links (site, repo, slides).
+3. **Curiosity photos for stop cards A and B** (NASA images: Altadena drill hole Mastcam 8 Jun 2025; Valle de la Luna Front Hazcam 12 Oct 2025). Stop C intentionally has no ground photo.
+4. Sources for walking speed and suit capacity (team is searching).
+5. Optional only if time remains: THEMIS sand layer.
+
+## Working rules
+
+- Do not invent numbers or coordinates. If unknown, say so.
+- Keep the README validation table in sync with `node tests/run-tests.js` output.
+- Commit messages in English; keep the site deployable from `main` at all times.
