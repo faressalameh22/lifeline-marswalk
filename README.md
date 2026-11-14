@@ -8,6 +8,7 @@ Team **Six Seven**, NASA Space Apps Challenge 2026, Nablus local event.
 Challenge: *Interplanetary Survival Guide: Martian Map*.
 
 **Live demo:** https://faressalameh22.github.io/lifeline-marswalk/
+**Slides (PDF):** https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
 
 ## Try it in four steps
 
