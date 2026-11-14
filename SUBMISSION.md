@@ -36,21 +36,21 @@ LIFELINE is a Marswalk planner that applies the Apollo rule "never go farther th
 
 **How it works.** LIFELINE computes the fastest walking time home from every 30 m cell of the terrain (Dijkstra path finding, 8 directions, walking speed reduced on slopes), then tracks how the suit reserve runs down with Apollo activity rates for driving, working and walking. The margin field on the map turns from green to yellow to red as the reserve drops. Decision gates at each stop switch to plan B (skip the lowest-science stop) or plan C (go home) when the margin ahead falls below the gate. A Why GO / Why NO-GO panel names the tightest limit and lists fixes; lowering the safety pad is never offered as a fix.
 
-**What you can try** (live, no login): drag the EVA time slider; press Rover fails, Suit failure, Crew injured or Solar storm (they combine); press Running late and watch the gate switch to plan B; drag stop C far away and read why the verdict turns to NO-GO. A Walk view shows what the astronaut would see on a wrist display.
+**What you can try** (live, no login): drag the EVA time slider; press Rover fails, Suit failure, Crew injured or Solar storm (they combine); press Running late three times and watch the gate send the crew home (plan C); drag stop C far away and read why the verdict turns to NO-GO. A Walk view shows what the astronaut would see on a wrist display.
 
-**Results with default assumptions.** Verdict GO. The plan takes 3 h 42 against the 4.25 h limit. The tightest limit is a suit failure while working at stop B: the ride home takes 35 min (42 min padded) against 57 min of emergency oxygen, leaving 15 min spare. Worst case if the rover fails: 37 min spare.
+**Results with default assumptions.** The crew visits A, then B, then C. Verdict: GO, margin tight. The full plan takes 3 h 42 against the 4.25 h limit. A suit failure while working at stop B leaves 15 min of emergency oxygen (ride home 35 min, 42 min padded, against 57 min). A rover failure leaves at worst 24 min, under the 30 min gate, so even on time the gate at A drops stop B and sends the crew A → C → home by T+2:55. The tool makes the cost of the order visible: Apollo's farthest-first order would leave 37 min.
 
 | Crisis, tested at every minute of the plan | Worst margin | Unsafe minutes |
 |---|---|---|
-| Rover fails | 37 min | 0 |
+| Rover fails | 24 min | 0 |
 | Suit fails | 15 min | 0 |
 | Solar storm | 23 min | 0 |
 | Crew member injured (rover works) | more than 6 h | 0 |
 | Suit fails and solar storm | 23 min | 0 |
-| Rover fails and crew member injured | −205 min | 178 |
+| Rover fails and crew member injured | −232 min | 178 |
 | Rover fails and suit fails | −151 min | 199 |
 
-Running 15 or 30 min late at stop B, the gates switch to plan B and the worst walk-back margin stays at 48 and 36 min. At 45 or 60 min late they switch to plan C and send the crew home.
+Running 15 or 30 min late at stop A, the gates keep plan B (skip B) and the worst walk-back margin stays at 49 and 37 min. At 45 or 60 min late they switch to plan C and send the crew home.
 
 **Validation.** Ten checks run in the page's Validation panel and in a headless test script, and all ten pass:
 

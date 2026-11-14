@@ -16,7 +16,7 @@ const harness=`
     for(let t=0;t<=Math.ceil(E.end);t++){const q=posAt(E.segs,t),u=consumed(E.segs,t),c=crisisAt(F,p,D,cr,q.cell,u);n++;if(Number.isNaN(c.m))nan++;if(c.m<worst)worst=c.m;if(c.m<0)unsafe++}
     out.crises[k]={worst,unsafe,n,nan};
   }
-  const first=farthestFirst(F,STOPS)[0];out.firstStop=first.id;out.order=farthestFirst(F,STOPS).map(s=>s.id);
+  const first=visitOrder(F,STOPS)[0];out.firstStop=first.id;out.order=visitOrder(F,STOPS).map(s=>s.id);
   out.late={};
   for(const L of [0,15,30,45,60]){const X=execute(F,p,D,STOPS,{[first.id]:L}),sc=scan(F,p,D,X.segs,0,0).worst;out.late[L]={plan:X.switches[X.switches.length-1].plan,end:X.end,worst:sc.m,gates:X.gates.map(g=>g.text)}}
   out.sens=sensitivity(F,p,STOPS);

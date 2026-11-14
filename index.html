@@ -135,6 +135,9 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
 .view3d{padding:10px}
 .v3d-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .v3d-head h2{margin:0}
+.v3d-head{flex-wrap:wrap}
+.v3d-look button{padding:4px 10px;font-size:12px}
+.v3d-legend{margin-top:8px}
 .v3d-head button{background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--muted);padding:4px 10px;cursor:pointer}
 .v3d{position:relative;width:100%;aspect-ratio:795/1105;background:#0b0f13;border-radius:8px;overflow:hidden;touch-action:none}
 .v3d canvas{display:block;width:100%;height:100%;cursor:grab}
@@ -146,6 +149,7 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
 .with3d .midcol>*{grid-column:1/-1}
 .with3d .midcol>.mapbox{grid-column:1;grid-row:1}
 .with3d .midcol>#view3dBox{grid-column:2;grid-row:1}
+@supports not (aspect-ratio:1/1){.v3d{height:60vh}}
 @media (max-width:1040px){.with3d .main{grid-template-columns:minmax(0,1fr)} .with3d .midcol{display:block} .with3d .midcol>#view3dBox{margin-top:12px} .v3d{aspect-ratio:4/3;max-height:70vh}}
 @media (max-width:600px){.maphint{max-width:50%;font-size:11px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -169,7 +173,7 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
   <div class="try" aria-label="Try it">
     <span><b>1</b>Drag the time slider</span>
     <span><b>2</b>Press Rover fails</span>
-    <span><b>3</b>Press Running late and watch the gate switch to plan B</span>
+    <span><b>3</b>Press Running late three times and watch the gate send the crew home</span>
     <span><b>4</b>Drag stop C far away and read why it says NO-GO</span>
   </div>
 
@@ -214,8 +218,9 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
       <div class="maphint">Drag a stop to move it. Tap anywhere to read its margin.</div>
     </div>
     <section class="card view3d" id="view3dBox" hidden aria-label="3D view">
-      <div class="v3d-head"><h2>3D view <span class="small">height ×3</span></h2><button id="v3dReset" type="button">Reset view</button></div>
+      <div class="v3d-head"><h2>3D view <span class="small">height ×3</span></h2><div class="seg v3d-look" role="group" aria-label="3D colours"><button id="lookTerrain" type="button" aria-pressed="true">Terrain</button><button id="lookMargins" type="button" aria-pressed="false">Safety margins</button></div><button id="v3dReset" type="button">Reset view</button></div>
       <div class="v3d" id="v3d"><div class="v3d-msg" id="v3dMsg">Loading the 3D view…</div></div>
+      <div class="small v3d-legend" id="v3dLegend">Colours show height from the HRSC terrain (dark red low, pale tan high); they are not a photo. Blue: route ahead. Grey: route done. Faded stop: skipped by a gate.</div>
       <div class="small v3d-help">Drag to rotate, scroll or pinch to zoom, right-drag or two fingers to pan. Heights are exaggerated three times. Drag stops on the 2D map; this view follows live.</div>
     </section>
     <div class="bar card">
@@ -283,7 +288,7 @@ walk-back margin  = reserve(t) ÷ walk_rate − (1 + pad) × walk_home          
 ride-back margin  = emergency_O2 − (1 + pad) × ride_home at emergency speed                  if the suit fails
 time limit        = the whole plan ends inside the max time in suit
 GO                = all three hold along the whole plan;   gates: margin &lt; gate → plan B (drop lowest science) → plan C (go home)</div>
-    <p>Terrain is the 30 m HRSC elevation map (ESA Mars Express), checked against Curiosity’s own altitudes in the validation panel; sand is not modelled until the THEMIS layer is connected. The crew drives to the farthest stop first so the walk home shrinks as the suits run down. Lowering the safety pad is never offered as a fix.</p>
+    <p>Terrain is the 30 m HRSC elevation map (ESA Mars Express), checked against Curiosity’s own altitudes in the validation panel; sand is not modelled until the THEMIS layer is connected. The crew visits A, then B, then C; a gate at each stop drops a stop or sends the crew home when the margin ahead falls under the gate. Lowering the safety pad is never offered as a fix.</p>
     <h3 class="refs-h">Where each value comes from</h3>
     <ul class="refs">
       <li><b>Sourced, Apollo [1]:</b> activity rates 700 / 1050 / 1200 BTU/h for riding, station work and walking (p. 1, items 5–7; used here as 0.67 / 1.00 / 1.14 of station work); 20% pad on the emergency walk back (p. 1, item 8); rover 8 km/h nominal and 10 km/h in emergencies (p. 1, item 9); 0.95 h of emergency oxygen for the trip home (p. 1, item 10); 3.1 km walking radius at 3.3 km/h, which the validation panel reproduces (p. 2). [1] applies the 20% pad to the walk back only; LIFELINE also pads the ride back, which is more cautious.</li>

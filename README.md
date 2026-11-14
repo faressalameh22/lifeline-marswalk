@@ -14,7 +14,7 @@ Challenge: *Interplanetary Survival Guide: Martian Map*.
 
 1. Drag the **EVA time** slider. The green safe zone shrinks toward the habitat as the suits run down.
 2. Press **Rover fails**. LIFELINE draws the walk home and says how many minutes are left in reserve.
-3. Press **Running late**. At the next stop the decision gate switches to plan B and skips the lowest-science stop.
+3. Press **Running late** three times (+45 min at stop A). The gate at A now sends the crew home (plan C) instead of going on to C.
 4. Drag stop **C** far away. The verdict turns to **NO-GO**, and the *Why NO-GO* panel lists the changes that would make it safe.
 
 Press **3D** at the top to see the same map draped over the real HRSC terrain (heights exaggerated three times). It is a view only: stops are dragged on the 2D map and the 3D view follows live. Pinch or scroll to zoom toward a spot (down to about 1 km, the limit of the 30 m terrain data), drag with one finger to tilt and look at the ridges from the side, and use two fingers to pan.
@@ -32,7 +32,7 @@ On the Moon, Apollo crews followed one rule: never drive farther from the lunar 
 | Stop B, Monte Grande | −4.80784 | 137.38104 | Curiosity drill sites in a hollow (Valle de la Luna) and on the ridge beside it (Nevado Sajama) |
 | Stop C | −4.80640 | 137.38150 | New site: a hollow inside the boxwork that Curiosity never reached; its route passes about 60 m away (57 m on sols 4810 to 4813; 90 m up to sol 4687) |
 
-The crew drives to the farthest stop first and works back, so the walk home gets shorter as consumables run down. Stops A and B are where the rover has been; stop C is where a human goes because wheels struggle on steep hollow edges.
+The crew visits A, then B, then C, then drives home. At each stop a gate checks the margin for the rest of the plan; with the default assumptions the margin ahead at A is only 23 min, under the 30 min gate, so the gate drops B and the crew goes A → C → home. (Apollo planners visited the farthest stop first so the walk home shrank as the suits ran down; with that order the worst rover-failure margin here would be 37 min instead of 24.) Stops A and B are where the rover has been; stop C is where a human goes because wheels struggle on steep hollow edges.
 
 ## How the model works
 
@@ -88,12 +88,12 @@ Two more test scripts back the numbers and the page itself:
 | Path finder, any direction | worst overestimate 8.2%, the theoretical bound for an 8-direction grid, always on the safe side |
 | **Reproduces Apollo's 3.1 km walking radius** | 3.12 km with Apollo inputs |
 | **Terrain matches Curiosity's own altitudes** | 885 waypoints, RMSE 11.7 m across 823 m of relief |
-| Rover failure at every minute of the plan | 223 simulated failures (every minute, T+0:00 to T+3:42), worst case 37 min spare |
+| Rover failure at every minute of the plan | 223 simulated failures (every minute, T+0:00 to T+3:42), worst case 24 min spare |
 | Suit failure at every minute | worst case 15 min of emergency oxygen left on arrival |
 | Plan fits the time-in-suit limit | 3 h 42 against 4.25 h |
 | Margin never grows while suits run down | holds |
 | Walk home never shorter than a straight line | 0 violations in 35,139 cells |
-| Running 30 min late stays safe | gates switch to plan B, worst margin 36 min |
+| Running 30 min late stays safe | +30 min at stop A: gates switch to plan B (skip B), home by T+3:25, worst margin 37 min |
 
 ## Assumptions and what they cost
 

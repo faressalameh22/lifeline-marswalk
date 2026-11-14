@@ -93,30 +93,31 @@ Radiation: 0.64 ± 0.12 mSv/day (Hassler et al. 2014, Science 343, doi:10.1126/s
 
 **Team assumptions, still unsourced (labelled as such on the page):** walking speed 2.5 km/h, cooling water 7.5 h (the binding consumable), slope term e^(-0.045 slope), payload effect, injured factor, 4.25 h time in suit, 30 min storm warning. Context for walking speed: NASA/TP-2009-214796 (10 km suited walk in lunar g took 96 min, 1.74 m/s; in Mars g subjects neared max effort at 1.5 m/s) and NASA/TP-2010-216115.
 
-Sensitivity on real terrain: −20% suit capacity → margin −34 min (NO-GO); −20% walking speed → −10 min (NO-GO).
+Sensitivity on real terrain (A→B→C): −20% suit capacity → margin −48 min (NO-GO); −20% walking speed → −27 min (NO-GO).
 
 ## Current results (default assumptions)
 
-Verdict GO. Tightest limit: suit failure at stop B, ride home 35 min (padded 42) vs 57 min emergency O2 → 15 min spare. Rover-failure worst case 37 min. Plan 3 h 42 vs 4.25 h. Running late 15 to 30 min at B → gate switches to plan B (skips A, lowest science).
+Visit order is always A → B → C (team decision 15 Nov, replacing Apollo's farthest-first; the gates still check every minute). Verdict GO, MARGIN TIGHT. Full plan A→B→C: 3 h 42 vs 4.25 h; rover-failure worst case 24 min (below the 30 min gate); suit failure at stop B: ride home 35 min (padded 42) vs 57 min emergency O2 → 15 min spare. Because the margin ahead at A is 23 min (< 30 min gate), even on time the gate at A drops B (plan B: A → C → home by T+2:55). Team chose to keep the 30 min gate. Farthest-first (B, C, A) gave 37 min; that comparison is a good story: the tool shows the cost of the order.
 
 ## Failure evaluation (real terrain, default assumptions, every minute of the 223-minute plan)
 
 | Crisis | Worst margin | Unsafe minutes |
 |---|---|---|
-| Rover fails | 37 min | 0 |
+| Rover fails | 24 min | 0 |
 | Suit fails | 15 min | 0 |
 | Solar storm | 23 min | 0 |
 | Crew injured (rover works) | > 6 h | 0 |
 | Suit fails + storm | 23 min | 0 |
-| Rover fails + injured | −205 min | 178 |
+| Rover fails + injured | −232 min | 178 |
 | Rover fails + suit fails | −151 min | 199 |
 
-| Late at stop B | Gate decision | Home by | Worst walk-back margin |
+| Late at stop A | Gate decision | Home by | Worst walk-back margin |
 |---|---|---|---|
-| 15 min | Plan B (skip A) | T+3:12 | 48 min |
-| 30 min | Plan B | T+3:27 | 36 min |
-| 45 min | Plan C (go home) | T+2:57 | 56 min |
-| 60 min | Plan C | T+3:12 | 44 min |
+| on time | Plan B (skip B) | T+2:55 | 61 min |
+| 15 min | Plan B (skip B) | T+3:10 | 49 min |
+| 30 min | Plan B | T+3:25 | 37 min |
+| 45 min | Plan C (go home) | T+2:49 | 77 min |
+| 60 min | Plan C | T+3:04 | 65 min |
 
 Message for the slides: every single failure is covered at every minute; two failures at once are not, as in Apollo planning, and the tool shows exactly where. Future work: second rover or support crew.
 

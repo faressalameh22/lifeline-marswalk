@@ -118,7 +118,7 @@ if(typeof document!=='undefined'){
   }
 
   function ladderHTML(active){
-    const rungs=[['A','Full mission','Farthest stop first, then work back'],['B','Shortened','Skip the lowest-science stop'],['C','Return early','Go home now, by rover or on foot'],['D','Emergency','Suit failure or storm: ride home or shelter']];
+    const rungs=[['A','Full mission','Stops A, B, C in order, then home'],['B','Shortened','Skip the lowest-science stop'],['C','Return early','Go home now, by rover or on foot'],['D','Emergency','Suit failure or storm: ride home or shelter']];
     return '<div class="ladder">'+rungs.map(r=>`<div class="rung${r[0]===active?' on':''}"><div class="l">${r[0]}</div><div><div>${r[1]}</div><div class="d">${r[2]}</div></div></div>`).join('')+'</div>';
   }
 
@@ -225,11 +225,19 @@ if(typeof document!=='undefined'){
     if(v3d||v3dLoading)return;
     let ok=false;try{const t=document.createElement('canvas');ok=!!(t.getContext('webgl2')||t.getContext('webgl'))}catch(e){}
     if(!ok){$('v3dMsg').textContent='This device or browser cannot show 3D (WebGL is not available). The 2D map has everything the 3D view shows.';return}
-    v3dLoading=import('./view3d.js').then(m=>{v3d=m.start($('v3d'),cv);window.__lifeline3d=v3d;$('v3dMsg').remove()}).catch(e=>{console.warn('3D view failed to load:',e);v3dLoading=null;$('v3dMsg').textContent='The 3D view could not load (it needs an internet connection the first time). The 2D map has everything the 3D view shows.'});
+    v3dLoading=import('./view3d.js').then(m=>{v3d=m.start($('v3d'),cv,scene3d);window.__lifeline3d=v3d;$('v3dMsg').remove()}).catch(e=>{console.warn('3D view failed to load:',e);v3dLoading=null;$('v3dMsg').textContent='The 3D view could not start on this browser (it needs WebGL, a recent browser such as Safari 16.4 or later, and an internet connection the first time). The 2D map has everything the 3D view shows.'});
   };
+  // What the 3D "Terrain" look draws on top of the relief: the same route, stops, crew and crisis path as the 2D map.
+  function scene3d(){
+    if(!X)return null;const pos=posAt(X.segs,state.t),visited=new Set(X.segs.filter(s=>s.type==='work').map(s=>s.stop.id));
+    let crisisPath=null,crisisShelter=false;
+    if(anyCrisis()){const used=usedAt(state.t),c=crisisAt(F,p,D,state.cr,pos.cell,used);const fld=c.mode==='ride'?(c.dest==='home'?F.rHome:F.rShel):(c.dest==='home'?F.wHome:F.wShel);crisisPath=pathTo(fld,pos.cell);crisisShelter=c.dest==='shelter'}
+    return {drives:X.segs.filter(s=>s.type==='drive').map(s=>({cells:s.path,done:s.t1<=state.t})),stops:STOPS.map(s=>({id:s.id,x:s.x,y:s.y,skipped:!visited.has(s.id)})),hab:HAB,crew:{x:pos.x,y:pos.y},crisisPath,crisisShelter};
+  }
+  const setLook=l=>{$('lookTerrain').setAttribute('aria-pressed',String(l==='terrain'));$('lookMargins').setAttribute('aria-pressed',String(l==='margins'));$('v3dLegend').textContent=l==='terrain'?'Colours show height from the HRSC terrain (dark red low, pale tan high); they are not a photo. Blue: route ahead. Grey: route done. Faded stop: skipped by a gate.':'Same colours as the 2D map: green safe, yellow tight, red no return.';if(v3d)v3d.setLook(l)};
   const close3d=()=>{$('view3dBox').hidden=true;document.body.classList.remove('with3d')};
   const setMode=m=>{state.mode=m;$('modePlan').setAttribute('aria-pressed',String(m==='plan'));$('modeWalk').setAttribute('aria-pressed',String(m==='walk'));$('mode3d').setAttribute('aria-pressed',String(m==='3d'));m==='3d'?open3d():close3d();render()};
-  $('mode3d').addEventListener('click',()=>setMode('3d'));$('v3dReset').addEventListener('click',()=>{if(v3d)v3d.reset()});
+  $('mode3d').addEventListener('click',()=>setMode('3d'));$('lookTerrain').addEventListener('click',()=>setLook('terrain'));$('lookMargins').addEventListener('click',()=>setLook('margins'));$('v3dReset').addEventListener('click',()=>{if(v3d)v3d.reset()});
   $('modePlan').addEventListener('click',()=>setMode('plan'));$('modeWalk').addEventListener('click',()=>setMode('walk'));
 
   const toCell=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W-.5,y:(e.clientY-r.top)/r.height*H-.5}};

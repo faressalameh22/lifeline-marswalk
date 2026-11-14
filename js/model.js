@@ -116,10 +116,12 @@ function scan(F,p,D,segs,from,priorUsed){
   }
   return {worst,ride};
 }
-function farthestFirst(F,stops){return [...stops].sort((a,b)=>F.wHome.time[cellXY(b.x,b.y)]-F.wHome.time[cellXY(a.x,a.y)])}
+// Visit order: always A, then B, then C (team decision, 15 Nov). Apollo planners went to the farthest stop first so the walk
+// home shrank as the suits ran down; with A > B > C the gates and the margin field still check every minute.
+function visitOrder(F,stops){return [...stops].sort((a,b)=>a.id.localeCompare(b.id))}
 
 function execute(F,p,D,stops,delays){
-  let list=farthestFirst(F,stops),plan='A',gates=[],segs=[],pos=cellXY(HAB.x,HAB.y),t=0,switches=[{t:0,plan:'A'}];
+  let list=visitOrder(F,stops),plan='A',gates=[],segs=[],pos=cellXY(HAB.x,HAB.y),t=0,switches=[{t:0,plan:'A'}];
   while(list.length){
     const s=list.shift(),d=driveSeg(F,p,pos,s,t);segs.push(d);t=d.t1;
     const dur=p.station+(delays[s.id]||0);segs.push({type:'work',t0:t,t1:t+dur,stop:s,cell:cellXY(s.x,s.y),rate:RATE.work});t+=dur;pos=cellXY(s.x,s.y);
@@ -141,7 +143,7 @@ function execute(F,p,D,stops,delays){
 }
 
 function evaluateDesign(F,p,D,stops){
-  const segs=simulate(F,p,cellXY(HAB.x,HAB.y),0,farthestFirst(F,stops),{});
+  const segs=simulate(F,p,cellXY(HAB.x,HAB.y),0,visitOrder(F,stops),{});
   const sc=scan(F,p,D,segs,0,0),end=segs[segs.length-1].t1,timeSpare=p.maxh*60-end;
   const slack=[['walk',sc.worst.m-p.gate,sc.worst.m],['ride',sc.ride.m-10,sc.ride.m],['time',timeSpare-15,timeSpare]].sort((a,b)=>a[1]-b[1]);
   const minM=Math.min(sc.worst.m,sc.ride.m,timeSpare);
@@ -176,7 +178,7 @@ function planChecks(F,p,D,E){
   out.push({ok:mono,t:'Margin never grows while the suits run down',d:'Checked every 5 minutes at a fixed point.'});
   let bad=0,hc=cellXY(HAB.x,HAB.y),hx=HAB.x,hy=HAB.y;for(let i=0;i<W*H;i++){if(!isFinite(F.wHome.time[i]))continue;const d=Math.hypot((i%W)-hx,Math.floor(i/W)-hy)*CELL/1000*60;if(F.wHome.time[i]<d-1e-6)bad++}
   out.push({ok:bad===0,t:'Walk home is never shorter than a straight line',d:`Checked all ${W*H} cells: ${bad} violations.`});
-  const first=farthestFirst(F,STOPS)[0],X2=execute(F,p,D,STOPS,{[first.id]:30}),sc2=scan(F,p,D,X2.segs,0,0).worst,pl=X2.switches[X2.switches.length-1].plan;
+  const first=visitOrder(F,STOPS)[0],X2=execute(F,p,D,STOPS,{[first.id]:30}),sc2=scan(F,p,D,X2.segs,0,0).worst,pl=X2.switches[X2.switches.length-1].plan;
   out.push({ok:isFinite(X2.end)&&sc2.m>=0&&X2.end<=p.maxh*60,t:'Running 30 min late stays safe',d:isFinite(X2.end)?`+30 min at stop ${first.id}: gates choose plan ${pl}, home by ${fmtClock(X2.end)}, worst margin ${fmtDur(sc2.m)}.`:cant});
   return out;
 }
