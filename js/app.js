@@ -1,7 +1,7 @@
 // LIFELINE user interface: map drawing, panels and controls.
 if(typeof document!=='undefined'){
   const $=id=>document.getElementById(id);
-  const cv=$('map'),ctx=cv.getContext('2d'),S=cv.width/W;
+  const cv=$('map'),ctx=cv.getContext('2d',{willReadFrequently:true}),S=cv.width/W; // CPU canvas: the 3D view reads it as a texture without a GPU stall
   const off=document.createElement('canvas');off.width=W;off.height=H;const octx=off.getContext('2d');
   const state={t:40,cr:{rover:false,suit:false,injured:false,storm:false},delays:{},mode:'plan',sel:'C',probe:null,drag:null,moved:false};
   const IDS=['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax'];
@@ -204,6 +204,7 @@ if(typeof document!=='undefined'){
     const g=E.grade,v=$('verdict');v.className='verdict '+g+'-c';v.textContent=g==='danger'?'NO-GO':g==='tight'?'GO, MARGIN TIGHT':'GO FOR EVA';
     const lateTot=Object.values(state.delays).reduce((a,b)=>a+b,0);$('lateNote').textContent=lateTot?'Delays so far: +'+lateTot+' min':'';
     $('leftCol').style.display=state.mode==='walk'?'none':'';
+    if(v3d)v3d.update();
   }
 
   $('tSlider').addEventListener('input',e=>{state.t=+e.target.value;render()});
@@ -217,7 +218,18 @@ if(typeof document!=='undefined'){
     state.delays[stop.id]=(state.delays[stop.id]||0)+15;replan();
   });
   $('clear').addEventListener('click',()=>{for(const k in state.cr)state.cr[k]=false;document.querySelectorAll('[data-cr]').forEach(b=>b.setAttribute('aria-pressed','false'));state.delays={};state.probe=null;replan()});
-  const setMode=m=>{state.mode=m;$('modePlan').setAttribute('aria-pressed',String(m==='plan'));$('modeWalk').setAttribute('aria-pressed',String(m==='walk'));render()};
+  // 3D view: loaded on first use, view only (the 2D canvas is its surface texture).
+  let v3d=null,v3dLoading=null;
+  const open3d=()=>{
+    $('view3dBox').hidden=false;document.body.classList.add('with3d');
+    if(v3d||v3dLoading)return;
+    let ok=false;try{const t=document.createElement('canvas');ok=!!(t.getContext('webgl2')||t.getContext('webgl'))}catch(e){}
+    if(!ok){$('v3dMsg').textContent='This device or browser cannot show 3D (WebGL is not available). The 2D map has everything the 3D view shows.';return}
+    v3dLoading=import('./view3d.js').then(m=>{v3d=m.start($('v3d'),cv);$('v3dMsg').remove()}).catch(e=>{console.warn('3D view failed to load:',e);v3dLoading=null;$('v3dMsg').textContent='The 3D view could not load (it needs an internet connection the first time). The 2D map has everything the 3D view shows.'});
+  };
+  const close3d=()=>{$('view3dBox').hidden=true;document.body.classList.remove('with3d')};
+  const setMode=m=>{state.mode=m;$('modePlan').setAttribute('aria-pressed',String(m==='plan'));$('modeWalk').setAttribute('aria-pressed',String(m==='walk'));$('mode3d').setAttribute('aria-pressed',String(m==='3d'));m==='3d'?open3d():close3d();render()};
+  $('mode3d').addEventListener('click',()=>setMode('3d'));$('v3dReset').addEventListener('click',()=>{if(v3d)v3d.reset()});
   $('modePlan').addEventListener('click',()=>setMode('plan'));$('modeWalk').addEventListener('click',()=>setMode('walk'));
 
   const toCell=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W-.5,y:(e.clientY-r.top)/r.height*H-.5}};

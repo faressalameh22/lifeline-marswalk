@@ -17,6 +17,8 @@ Challenge: *Interplanetary Survival Guide: Martian Map*.
 3. Press **Running late**. At the next stop the decision gate switches to plan B and skips the lowest-science stop.
 4. Drag stop **C** far away. The verdict turns to **NO-GO**, and the *Why NO-GO* panel lists the changes that would make it safe.
 
+Press **3D** at the top to see the same map draped over the real HRSC terrain (heights exaggerated three times). It is a view only: stops are dragged on the 2D map and the 3D view follows live.
+
 ## The idea
 
 On the Moon, Apollo crews followed one rule: never drive farther from the lunar module than you can walk back if the rover fails. They also had a second limit: if a backpack failed, its emergency oxygen (about 0.95 h) had to last the ride home at 10 km/h. LIFELINE draws both limits on a real Mars map and adds a third one, the time an astronaut can stay in the suit.
@@ -107,6 +109,7 @@ index.html            page, styles and markup
 js/mission.js         habitat, stops, default assumptions
 js/model.js           terrain, path finding, plans, gates, crises, validation (no DOM)
 js/app.js             map drawing, panels, controls
+js/view3d.js          optional 3D view (three.js 0.160.0 from jsDelivr, loaded only when 3D is pressed)
 data/terrain.js       HRSC elevation slice
 data/rover-track.js   Curiosity waypoints in the slice
 tests/run-tests.js    headless validation run

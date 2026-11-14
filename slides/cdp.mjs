@@ -2,7 +2,7 @@
 import { spawn } from 'node:child_process';
 const CHROME='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 export async function launch(port=9333){
-  const p=spawn(CHROME,['--headless=new','--disable-gpu','--hide-scrollbars',`--remote-debugging-port=${port}`,`--user-data-dir=/tmp/lifeline-chrome-${port}`,'--disk-cache-size=1','--disable-application-cache','about:blank'],{stdio:'ignore'});
+  const p=spawn(CHROME,['--headless=new','--use-angle=swiftshader','--enable-unsafe-swiftshader','--hide-scrollbars',`--remote-debugging-port=${port}`,`--user-data-dir=/tmp/lifeline-chrome-${port}`,'--disk-cache-size=1','--disable-application-cache','about:blank'],{stdio:'ignore'});
   let tabs; for(let i=0;i<200;i++){try{tabs=await (await fetch(`http://127.0.0.1:${port}/json`)).json();if(tabs.find(t=>t.type==='page'))break}catch{}await new Promise(r=>setTimeout(r,200))}
   const ws=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl); await new Promise(r=>ws.onopen=r);
   let id=0; const pend=new Map(), waiters=[];

@@ -47,6 +47,8 @@ LIFELINE applies the Apollo rule "never go farther than you can walk home" to Ma
 
 Features in the site: margin field on the map, time slider, crises (rover fails, suit failure, crew injured, solar storm, combinable), running late, plan ladder A/B/C/D, decision gates at each stop, Why GO / Why NO-GO panel with fixes (never lowers the safety pad), backup card (leave-by times), draggable stops, science value per stop, Plan/Walk (wrist display) views, Validation panel with sensitivity chart.
 
+Added 15 Nov (team decision): a **3D view** button (Plan | Walk | 3D). View only: the HRSC terrain as a three.js surface (height ×3, labelled), textured with the live 2D map canvas, so it always shows exactly what the 2D map shows. Stops are dragged on the 2D map only (decided: precision, no rotate/drag conflict). `js/view3d.js`, three.js 0.160.0 pinned via an import map to jsDelivr, loaded on first press; without WebGL or network it shows a message and the 2D map keeps working. No model change.
+
 Out of scope, do not add: helmet HUD, satellite imagery basemap, wind, fatigue model, crew size, multiple pages, backend, accounts.
 
 ## The mission (locked)

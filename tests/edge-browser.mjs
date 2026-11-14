@@ -10,6 +10,9 @@ const events=[];
 b.on(m=>{
   if(m.method==='Runtime.exceptionThrown')events.push('exception: '+(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text).split('\n')[0]);
   if(m.method==='Runtime.consoleAPICalled'&&['error','warning','assert'].includes(m.params.type))events.push('console.'+m.params.type+': '+m.params.args.map(a=>a.value??a.description).join(' '));
+  // SwiftShader (the software WebGL used headless) logs 'GL Driver Message ... Performance' notes when the 3D view
+  // starts; they are driver performance hints, not page errors, and do not appear with a real GPU. Every other entry fails.
+  if(m.method==='Log.entryAdded'&&/GL Driver Message \(OpenGL, Performance/.test(m.params.entry.text))return;
   if(m.method==='Log.entryAdded'&&['error','warning'].includes(m.params.entry.level))events.push('log '+m.params.entry.level+': '+m.params.entry.text+(m.params.entry.url?' '+m.params.entry.url:''));
 });
 await b.send('Runtime.enable');await b.send('Log.enable');
@@ -63,6 +66,7 @@ const toPx=(cx,cy)=>({x:rect.x+(cx+.5)/W_*rect.w,y:rect.y+(cy+.5)/H_*rect.h});
 const W_=await b.evalJS('W'),H_=await b.evalJS('H');
 const drag=async(id,tx,ty,label)=>{
   await b.evalJS(`window.scrollTo(0,0)`);
+  Object.assign(rect,JSON.parse(await b.evalJS(`JSON.stringify((()=>{const r=document.getElementById('map').getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}})())`)));
   const st=JSON.parse(await b.evalJS(`JSON.stringify(STOPS.find(s=>s.id==='${id}'))`));
   const a=toPx(st.x,st.y),z=toPx(tx,ty);
   await b.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:a.x,y:a.y});
@@ -74,11 +78,26 @@ const drag=async(id,tx,ty,label)=>{
   if(after.x===st.x&&after.y===st.y&&(st.x!==tx||st.y!==ty))console.log(`  (stop ${id} did not move from ${st.x},${st.y}: target refused)`);
   const r=await check(label);await sweep(label,10);r.at=after.x+','+after.y;return r;
 };
-const hab=JSON.parse(await b.evalJS('JSON.stringify(HAB)'));
+const hab=JSON.parse(await b.evalJS('JSON.stringify(HAB)'));const st0C=JSON.parse(await b.evalJS(`JSON.stringify(STOPS.find(s=>s.id==='C'))`));
 const steep=await b.evalJS(`(()=>{let best=0,bi=0;for(let i=0;i<W*H;i++)if(T.slope[i]>best){best=T.slope[i];bi=i}return JSON.stringify({x:bi%W,y:Math.floor(bi/W),s:best})})()`);
 const st=JSON.parse(steep);
 const cases=[['C',1,1,'C to top-left corner'],['C',W_-2,H_-2,'C to bottom-right corner'],['A',W_-2,1,'A to top-right corner'],['B',1,H_-2,'B to bottom-left corner'],['C',st.x,st.y,`C onto steepest cell (${st.s.toFixed(0)} deg)`],['A',hab.x,hab.y,'A onto the habitat'],['B',hab.x,hab.y,'B onto the habitat too'],['C',hab.x,hab.y,'all three on the habitat']];
 for(const [id,x,y,l] of cases){const r=await drag(id,x,y,l);console.log(l.padEnd(34),'-> at',r.at.padEnd(8),r.shown)}
+// 5b. 3D view: opens (or shows its fallback message), follows crises and drags, closes with Plan/Walk
+await b.goto(URL,1440,1400,1);
+await b.evalJS(`document.getElementById('mode3d').click()`);
+for(let i=0;i<60;i++){if(await b.evalJS(`!!document.querySelector('#v3d canvas')||!document.getElementById('v3dMsg')?.textContent.startsWith('Loading')`))break;await b.sleep(250)}
+const v3state=await b.evalJS(`JSON.stringify({canvas:!!document.querySelector('#v3d canvas'),msg:document.getElementById('v3dMsg')?.textContent||null,left:getComputedStyle(document.getElementById('leftCol')).display,box:!document.getElementById('view3dBox').hidden})`);
+console.log('\n3D view state:',v3state);
+if(!JSON.parse(v3state).box)problems.push('[3D] panel did not open');
+await check('3D open');
+for(const n of names){await crisis(n);await check('3D + crisis '+n)}await sweep('3D, all crises',15);await b.evalJS(`document.getElementById('clear').click()`);
+const r3=await drag('C',W_-2,H_-2,'3D open: drag C to a corner');console.log('3D open: drag C to a corner'.padEnd(34),'-> at',r3.at.padEnd(8),r3.shown);
+await drag('C',st0C.x,st0C.y,'3D open: drag C back');
+await b.evalJS(`document.getElementById('modeWalk').click()`);await check('3D then Walk');
+if(await b.evalJS(`!document.getElementById('view3dBox').hidden`))problems.push('[3D] panel still open in Walk view');
+await b.evalJS(`document.getElementById('mode3d').click()`);await b.sleep(500);await b.evalJS(`document.getElementById('modePlan').click()`);await check('3D then Plan');
+if(await b.evalJS(`!document.getElementById('view3dBox').hidden`))problems.push('[3D] panel still open in Plan view');
 // 6. reload and check the clean state once more
 await b.goto(URL,1440,1400,1);
 s=await check('after reload');

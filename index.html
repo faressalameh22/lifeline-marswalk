@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LIFELINE Marswalk planner</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <meta name="description" content="A Marswalk planner that never sends astronauts farther than they can walk home. Team Six Seven, NASA Space Apps Challenge 2026, Nablus.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%23C1440E%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -131,6 +132,21 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
 .track .lo,.track .hi{position:absolute;top:3px;white-space:nowrap;font-family:var(--mono);font-size:11px;color:var(--text)}
 @media (max-width:1040px){.vgrid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:1040px){.main{grid-template-columns:minmax(0,1fr)} .midcol{order:-1} .lower{grid-template-columns:minmax(0,1fr)}}
+.view3d{padding:10px}
+.v3d-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.v3d-head h2{margin:0}
+.v3d-head button{background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--muted);padding:4px 10px;cursor:pointer}
+.v3d{position:relative;width:100%;aspect-ratio:795/1105;background:#0b0f13;border-radius:8px;overflow:hidden;touch-action:none}
+.v3d canvas{display:block;width:100%;height:100%;cursor:grab}
+.v3d-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;color:var(--muted);font-size:13px}
+.v3d-help{margin-top:8px}
+.with3d .main{grid-template-columns:minmax(0,1fr) 290px}
+.with3d #leftCol{display:none}
+.with3d .midcol{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+.with3d .midcol>*{grid-column:1/-1}
+.with3d .midcol>.mapbox{grid-column:1;grid-row:1}
+.with3d .midcol>#view3dBox{grid-column:2;grid-row:1}
+@media (max-width:1040px){.with3d .main{grid-template-columns:minmax(0,1fr)} .with3d .midcol{display:block} .with3d .midcol>#view3dBox{margin-top:12px} .v3d{aspect-ratio:4/3;max-height:70vh}}
 @media (max-width:600px){.maphint{max-width:50%;font-size:11px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -143,6 +159,7 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
     <div class="seg" role="group" aria-label="View">
       <button id="modePlan" aria-pressed="true">Plan</button>
       <button id="modeWalk" aria-pressed="false">Walk</button>
+      <button id="mode3d" aria-pressed="false" title="Show the terrain in 3D beside the map">3D</button>
     </div>
     <div id="verdict" class="verdict safe-c">GO FOR EVA</div>
   </header>
@@ -196,6 +213,11 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
       <canvas id="map" width="795" height="1105" aria-label="Map of the planned Marswalk with walk-back margin zones, route, stops and shelters"></canvas>
       <div class="maphint">Drag a stop to move it. Tap anywhere to read its margin.</div>
     </div>
+    <section class="card view3d" id="view3dBox" hidden aria-label="3D view">
+      <div class="v3d-head"><h2>3D view <span class="small">height ×3</span></h2><button id="v3dReset" type="button">Reset view</button></div>
+      <div class="v3d" id="v3d"><div class="v3d-msg" id="v3dMsg">Loading the 3D view…</div></div>
+      <div class="small v3d-help">Drag to rotate, scroll or pinch to zoom, right-drag or two fingers to pan. Heights are exaggerated three times. Drag stops on the 2D map; this view follows live.</div>
+    </section>
     <div class="bar card">
     <div class="whatif" role="group" aria-label="Crises">
       <span class="small">Crisis now:</span>
