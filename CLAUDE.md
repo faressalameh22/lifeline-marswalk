@@ -84,11 +84,13 @@ No build step. Plain scripts, `var` globals in data/mission files so the test ru
 
 ## Model defaults and which are sourced
 
-Sourced (Apollo traverse planning): activity rates drive 0.67 / work 1.00 / walk 1.14 (700/1050/1200 BTU/h), 20% pad, 0.95 h emergency oxygen, 10 km/h emergency rover, Apollo walking radius 3.1 km (our model reproduces 3.12 km). Surface dose 0.67 mSv/day (Curiosity RAD, Hassler et al. 2014).
+Sourced, one document for all Apollo values: P. Benjamin, "Apollo 15 EVA Capability and Constraints Envelopes", Bellcomm memo B70 10028 (Case 320), 13 Oct 1970, NASA-CR-111182 (N79-73020). Not in NTRS; on NASA's ALSJ (nasa.gov/wp-content/uploads/static/history/alsj/19790073512_1979073512.pdf, archived copy on web.archive.org). p. 1 items 5-10: 1050 work / 700 riding / 1200 walking BTU/h at 3.3 km/h, 20% pad on emergency walkback (1440 BTU/h), LRV 8 km/h nominal and 10 km/h emergency, 0.95 h of B/SLSS oxygen for travel home. p. 2: 3.1 km walking radius (model reproduces 3.12 km). The memo pads only the walkback; LIFELINE also pads the rideback (more cautious) and says so on the page.
+Suit oxygen 8 h: xEMU "supports EVAs of up to 8 hours (6±2)", Coan, NASA JSC Feb 2021, p. 8, NTRS 20210000827 (lunar suit).
+Radiation: 0.64 ± 0.12 mSv/day (Hassler et al. 2014, Science 343, doi:10.1126/science.1244797, NTRS 20180007641). Display only. 0.67 was a 2013 press-release figure; do not use it.
 
-**Team assumptions, still unsourced:** walking speed 2.5 km/h, suit O2 8 h and cooling water 7.5 h, payload effect, injured factor, 4.25 h time in suit, 30 min storm warning.
+**Team assumptions, still unsourced (labelled as such on the page):** walking speed 2.5 km/h, cooling water 7.5 h (the binding consumable), slope term e^(-0.045 slope), payload effect, injured factor, 4.25 h time in suit, 30 min storm warning. Context for walking speed: NASA/TP-2009-214796 (10 km suited walk in lunar g took 96 min, 1.74 m/s; in Mars g subjects neared max effort at 1.5 m/s) and NASA/TP-2010-216115.
 
-Sensitivity on real terrain: −20% suit capacity → margin −34 min (NO-GO); −20% walking speed → −10 min (NO-GO). Finding sources for these two is the top open research task. If none are found, say so openly on a slide.
+Sensitivity on real terrain: −20% suit capacity → margin −34 min (NO-GO); −20% walking speed → −10 min (NO-GO).
 
 ## Current results (default assumptions)
 

@@ -60,7 +60,7 @@ Running 15 or 30 min late at stop B, the gates switch to plan B and the worst wa
 - The path finder is exact on flat ground and never overestimates by more than the 8.2% bound of an 8-direction grid, always on the safe side.
 - The walk home is never shorter than a straight line (0 violations in 35,139 cells), and the margin never grows while suits run down.
 
-**What we do not know yet.** Walking speed (2.5 km/h), suit oxygen and cooling water capacity (8 h and 7.5 h), payload and injury effects, time in suit (4.25 h) and storm warning time (30 min) are team assumptions, not sourced numbers. They matter: with 20% less suit capacity or 20% slower walking, today's plan becomes NO-GO. Every assumption is visible and editable in the tool, and the sensitivity chart shows its effect immediately.
+**What we do not know yet.** Walking speed on Mars (2.5 km/h), cooling water capacity (7.5 h), the slope slowdown term, payload and injury effects, time in suit (4.25 h) and storm warning time (30 min) are team assumptions, not sourced numbers. NASA suited tests show walking in Mars gravity is far harder than on the Moon (subjects neared maximum effort at 1.5 m/s), so our 2.5 km/h is deliberately slow, but no measured Mars walking speed exists yet. They matter: with 20% less suit capacity or 20% slower walking, today's plan becomes NO-GO. Every assumption is visible and editable in the tool, and the sensitivity chart shows its effect immediately.
 
 **Impact.** LIFELINE turns a crew's safety margin into a number the crew and the planner can check before and during every Marswalk, on real terrain. The same method works for any landing site with an elevation model. Next steps: a sand layer from THEMIS thermal data, a second rover or support crew to cover double failures, and a helmet display for the walking crew.
 
@@ -71,8 +71,10 @@ Running 15 or 30 min late at stop B, the gates switch to plan B and the worst wa
 - **Curiosity Front Hazcam image**, sol 4687 (12 Oct 2025), raw image FLB_813578617EDR_F1191722FHAZ00302M: stop B at Monte Grande. Credit NASA/JPL-Caltech.
 - **MRO HiRISE image ESP_087149_1750** (28 Feb 2025): orbital view of stop C, a crop of the browse product at about 3 m per pixel. Credit NASA/JPL-Caltech/University of Arizona.
 - **Curiosity REMS weather**, NASA MSL weather feed: daily air temperature (−82 to −5 °C), pressure (679 to 782 Pa) and sky for 123 sols, sols 4564 to 4687, shown in the Environment panel.
-- **Curiosity RAD surface radiation**: 0.67 mSv/day at Gale Crater (Hassler et al. 2014, Science).
-- **Apollo traverse planning** (NASA): activity rates for driving, working and walking, the 20% pad, 0.95 h emergency oxygen, 10 km/h emergency rover speed and the 3.1 km walking radius used for validation.
+- **Curiosity RAD surface radiation**: 0.64 ± 0.12 mSv/day dose equivalent at Gale Crater (Hassler et al. 2014, Science 343, doi:10.1126/science.1244797; NTRS 20180007641).
+- **Apollo traverse planning**: P. Benjamin, *Apollo 15 EVA Capability and Constraints Envelopes*, Bellcomm memorandum B70 10028, 13 Oct 1970, NASA-CR-111182 (N79-73020), archived by NASA's Apollo Lunar Surface Journal. Source of the activity rates (700/1050/1200 BTU/h), the 20% pad, the 8 and 10 km/h rover speeds, the 0.95 h of emergency oxygen (p. 1) and the 3.1 km walking radius used for validation (p. 2).
+- **xEMU suit**: NASA's lunar suit is specified for EVAs of up to 8 h (6 ± 2 h) (Coan, NASA JSC 2021, NTRS 20210000827); source of the 8 h suit oxygen.
+- **NASA suited walking tests**: Norcross et al., NASA/TP-2009-214796 (2009) and NASA/TP-2010-216115 (2010), used as context for the walking-speed assumption.
 
 ## Space Agency Partner and other data
 

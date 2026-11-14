@@ -54,8 +54,9 @@ Crises in the demo: rover failure, suit failure, injured crew member, solar stor
 |---|---|
 | Terrain | Persaud, Putri & Muller (2021), *30-m HRSC DTM Mosaic of Gale Crater, Mars*, Zenodo, [doi:10.5281/zenodo.5808354](https://doi.org/10.5281/zenodo.5808354), CC BY 4.0. HRSC flies on ESA's Mars Express. |
 | Curiosity track and stops A, B | NASA/JPL MMGIS `MSL_waypoints.json`, the data behind NASA's [Where is Curiosity?](https://mars.nasa.gov/maps/location/?mission=Curiosity) map |
-| Surface radiation | Hassler et al. (2014), *Science*: 0.67 mSv/day measured by Curiosity's RAD at Gale Crater |
-| Walk-back and ride-back limits, activity rates, 20% pad | Apollo traverse planning documents (NASA) |
+| Surface radiation | Hassler et al. (2014), *Science* 343 (6169), [doi:10.1126/science.1244797](https://doi.org/10.1126/science.1244797), [NTRS 20180007641](https://ntrs.nasa.gov/citations/20180007641): 0.64 ± 0.12 mSv/day dose equivalent measured by Curiosity's RAD at Gale Crater (shown for context, not used in the margins). A 2013 press release quoted 0.67 mSv/day for a shorter period; we use the published value. |
+| Walk-back and ride-back limits, activity rates, 20% pad, rover speeds, 0.95 h emergency oxygen, 3.1 km radius | P. Benjamin, *Apollo 15 EVA Capability and Constraints Envelopes*, Bellcomm memorandum B70 10028 (Case 320), 13 Oct 1970, NASA-CR-111182 (N79-73020): p. 1 items 5–10 (700/1050/1200 BTU/h, 20% pad, 8 and 10 km/h, 0.95 h), p. 2 (3.1 km at 3.3 km/h). Not in NTRS; archived by NASA's Apollo Lunar Surface Journal: [nasa.gov PDF](https://www.nasa.gov/wp-content/uploads/static/history/alsj/19790073512_1979073512.pdf), [archived copy](https://web.archive.org/web/2019/https://www.hq.nasa.gov/alsj/19790073512_1979073512.pdf). The memo pads the walk back only; LIFELINE also pads the ride back (more cautious). |
+| Suit oxygen 8 h | NASA xEMU lunar suit, specified for EVAs of up to 8 h (6 ± 2 h): D. Coan, *NASA Exploration EVA Integrated HITL Testing and Analogs*, NASA JSC, Feb 2021, p. 8, [NTRS 20210000827](https://ntrs.nasa.gov/citations/20210000827). A Moon suit; no Mars suit figure exists yet. |
 | Boxwork science | NASA Curiosity mission blog posts, 2025 |
 | Weather (REMS) | Curiosity REMS daily air temperature, pressure and sky, sols 4564 to 4687 (8 Jun to 12 Oct 2025, drill site A to drill site B), from NASA's MSL weather feed `mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json` (values by Centro de Astrobiología; outreach product, science data are in the PDS). 123 sols: air −82 to −5 °C, pressure 679 to 782 Pa. Stored unchanged in `data/rems-weather.js` |
 | Stop photo A | Curiosity Mastcam (left), sol 4564, 8 Jun 2025, raw image `4564ML1077420021801947E01` (Altadena drill hole). Credit NASA/JPL-Caltech/MSSS. From NASA's [raw image archive](https://mars.nasa.gov/msl/multimedia/raw-images/) |
@@ -92,9 +93,11 @@ Two more test scripts back the numbers and the page itself:
 
 ## Assumptions and what they cost
 
-These values are team assumptions, not sourced numbers: walking speed on flat ground (2.5 km/h), suit oxygen and cooling water (8 h and 7.5 h at work rate), payload effect (−0.5% speed and +1% effort per kg), injured crew factor (half speed, +30% effort), time in suit (4.25 h) and storm warning time (30 min).
+These values are team assumptions, not sourced numbers: walking speed on Mars (2.5 km/h), cooling water (7.5 h at work rate, the tightest consumable in the model), the slope slowdown term e^(−0.045·slope°), payload effect (−0.5% speed and +1% effort per kg), injured crew factor (half speed, +30% effort), time in suit (4.25 h) and storm warning time (30 min).
 
-The sensitivity chart shows they matter. With 20% less suit capacity or 20% slower walking, today's plan becomes NO-GO. That is the point of the tool: every assumption is visible, editable, and its effect is shown immediately. Lowering the safety pad is never offered as a fix.
+On walking speed, the closest NASA evidence is suited treadmill testing: a 10 km walk in simulated lunar gravity took 96 min on average (1.74 m/s), while in simulated Mars gravity subjects approached maximum effort at 1.5 m/s (Norcross et al., [NASA/TP-2009-214796](https://www.lpi.usra.edu/lunar/artemis/NorcrossEtAl_NASA-TP-2009-214796_EVA%20Walkback%20Test.pdf), 2009; see also [NASA/TP-2010-216115](https://www.lpi.usra.edu/lunar/artemis/NorcrossEtAl_NASA-TP-2010-216115_PlanetarySuitMetabolicCosts.pdf), 2010). Apollo planning used 3.3 km/h on the Moon. Our 2.5 km/h (0.69 m/s) is below all of these, but no measured sustained suited walking speed on Mars exists.
+
+The sensitivity chart shows the assumptions matter. With 20% less suit capacity or 20% slower walking, today's plan becomes NO-GO. That is the point of the tool: every assumption is visible, editable, and its effect is shown immediately. Lowering the safety pad is never offered as a fix.
 
 ## Project layout
 
