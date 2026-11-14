@@ -6,7 +6,12 @@ if(typeof document!=='undefined'){
   const state={t:40,cr:{rover:false,suit:false,injured:false,storm:false},delays:{},mode:'plan',sel:'C',probe:null,drag:null,moved:false};
   const IDS=['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax'];
   const KEYS=['speed','o2','h2o','emerg','pad','gate','load','slope','sand','rover','roverE','station','warn','maxh'];
-  const params=()=>{const o={};IDS.forEach((id,k)=>{const v=parseFloat($(id).value);o[KEYS[k]]=isFinite(v)?v:parseFloat($(id).defaultValue)});return o};
+  // Read the assumption inputs. Empty or non-numeric text falls back to the default; values outside the
+  // input's min/max are clamped and written back, so a typed 0, negative or huge value can never reach the model.
+  const params=()=>{const o={};IDS.forEach((id,k)=>{const el=$(id);let v=parseFloat(el.value);if(!isFinite(v))v=parseFloat(el.defaultValue);
+    const mn=parseFloat(el.min),mx=parseFloat(el.max);if(isFinite(mn))v=Math.max(mn,v);if(isFinite(mx))v=Math.min(mx,v);
+    if(el.value!==String(v))el.value=String(v);o[KEYS[k]]=v});return o};
+  window.__lifelineParams=()=>params();
   IDS.forEach((id,k)=>{if(DEFAULTS[KEYS[k]]!==undefined){$(id).value=DEFAULTS[KEYS[k]];$(id).defaultValue=String(DEFAULTS[KEYS[k]])}});
   let p,D,F,X,E;
   const COL={safe:[46,173,107],tight:[242,176,30],danger:[217,52,43]};
@@ -217,7 +222,7 @@ if(typeof document!=='undefined'){
 
   const toCell=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W-.5,y:(e.clientY-r.top)/r.height*H-.5}};
   let raf=0;
-  cv.addEventListener('pointerdown',e=>{const q=toCell(e);const hit=STOPS.find(s=>Math.hypot(s.x-q.x,s.y-q.y)<3.5);state.moved=false;if(hit){state.drag=hit;state.sel=hit.id;cv.setPointerCapture(e.pointerId)}});
+  cv.addEventListener('pointerdown',e=>{const q=toCell(e);const hit=STOPS.map(s=>({s,d:Math.hypot(s.x-q.x,s.y-q.y)})).filter(o=>o.d<3.5).sort((a,b)=>a.d-b.d)[0]?.s;state.moved=false;if(hit){state.drag=hit;state.sel=hit.id;cv.setPointerCapture(e.pointerId)}});
   cv.addEventListener('pointermove',e=>{if(!state.drag)return;const q=toCell(e),x=Math.round(Math.max(1,Math.min(W-2,q.x))),y=Math.round(Math.max(1,Math.min(H-2,q.y)));
     if(T.slope[y*W+x]>p.slope)return;if(x===state.drag.x&&y===state.drag.y)return;state.drag.x=x;state.drag.y=y;state.moved=true;
     if(!raf)raf=requestAnimationFrame(()=>{raf=0;F.rStop[state.drag?state.drag.id:'C']=dijkstra(F.rv,[cellXY((state.drag||STOPS[2]).x,(state.drag||STOPS[2]).y)]);replan()})});

@@ -18,7 +18,7 @@ Six Seven, Nablus local event (An-Najah University)
 
 ## High-level summary
 
-LIFELINE is a Marswalk planner that applies the Apollo rule "never go farther than you can walk home" to Mars. An EVA planner places science stops on a real map of the boxwork ridges of Mount Sharp in Gale Crater, and LIFELINE checks, at every minute and every place on the route, that the crew can still get home if the rover fails or a suit fails, and that the walk fits the time an astronaut can stay in a suit. It gives one clear answer, GO or NO-GO, explains why, and shows what to change. We tested the plan against 444 simulated failures on real terrain: every single failure leaves the crew a safe way home, at every minute of the walk. Two failures at once do not, and the tool shows exactly where.
+LIFELINE is a Marswalk planner that applies the Apollo rule "never go farther than you can walk home" to Mars. An EVA planner places science stops on a real map of the boxwork ridges of Mount Sharp in Gale Crater, and LIFELINE checks, at every minute and every place on the route, that the crew can still get home if the rover fails or a suit fails, and that the walk fits the time an astronaut can stay in a suit. It gives one clear answer, GO or NO-GO, explains why, and shows what to change. We tested the plan against 446 simulated failures (a rover failure and a suit failure at each of the 223 minutes) on real terrain: every single failure leaves the crew a safe way home, at every minute of the walk. Two failures at once do not, and the tool shows exactly where.
 
 ## Detailed description
 
@@ -56,7 +56,7 @@ Running 15 or 30 min late at stop B, the gates switch to plan B and the worst wa
 
 - With Apollo inputs, the model reproduces Apollo's 3.1 km walking radius (3.12 km).
 - The terrain matches Curiosity's own altitudes at 885 waypoints: RMSE 11.7 m across 823 m of relief.
-- 222 simulated rover failures and 222 simulated suit failures along the plan, all with a safe way home.
+- 223 simulated rover failures and 223 simulated suit failures along the plan, all with a safe way home.
 - The path finder is exact on flat ground and never overestimates by more than the 8.2% bound of an 8-direction grid, always on the safe side.
 - The walk home is never shorter than a straight line (0 violations in 35,139 cells), and the margin never grows while suits run down.
 

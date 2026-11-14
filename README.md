@@ -72,13 +72,18 @@ The terrain slice was read directly from the Zenodo GeoTIFF with HTTP range requ
 
 Run `node tests/run-tests.js`. The same ten checks run live in the page's Validation panel.
 
+Two more test scripts back the numbers and the page itself:
+
+- `node tests/audit-numbers.js` recomputes every number quoted in this README, the submission text and the slides (crisis table, running-late table, sensitivity) from the model.
+- `node tests/edge-browser.mjs` (serve the folder on port 8790 first) drives the real page in headless Chrome through every crisis combination, repeated delays, out-of-range inputs and dragged stops, and fails on any console error, on "NaN", "undefined" or "Infinity" in the page, or on a verdict that differs from an independent run of the model.
+
 | Check | Result |
 |---|---|
 | Path finder, straight line on flat ground | exact (72.0 min vs 72.0 min) |
 | Path finder, any direction | worst overestimate 8.2%, the theoretical bound for an 8-direction grid, always on the safe side |
 | **Reproduces Apollo's 3.1 km walking radius** | 3.12 km with Apollo inputs |
 | **Terrain matches Curiosity's own altitudes** | 885 waypoints, RMSE 11.7 m across 823 m of relief |
-| Rover failure at every minute of the plan | 222 simulated failures, worst case 37 min spare |
+| Rover failure at every minute of the plan | 223 simulated failures (every minute, T+0:00 to T+3:42), worst case 37 min spare |
 | Suit failure at every minute | worst case 15 min of emergency oxygen left on arrival |
 | Plan fits the time-in-suit limit | 3 h 42 against 4.25 h |
 | Margin never grows while suits run down | holds |

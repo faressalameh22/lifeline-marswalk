@@ -166,16 +166,18 @@ function flatChecks(){
   return out;
 }
 function planChecks(F,p,D,E){
-  const out=[],mins=Math.round(E.end);
-  out.push({ok:E.sc.worst.m>=0,t:'Rover failure tested at every minute',d:`${mins} simulated failures along the plan. Worst case: ${fmtDur(E.sc.worst.m)} spare.`});
-  out.push({ok:E.sc.ride.m>=0,t:'Suit failure tested at every minute',d:`${mins} simulated failures. Worst case: ${fmtDur(E.sc.ride.m)} of emergency oxygen left on arrival.`});
-  out.push({ok:E.timeSpare>=0,t:'Plan fits the time-in-suit limit',d:`${fmtDur(E.end)} planned against a ${p.maxh} h limit.`});
-  let mono=true,prev=Infinity;const ci=cellXY(STOPS[0].x,STOPS[0].y);for(let t=0;t<=E.end;t+=5){const m=walkMargin(F,p,D,ci,consumed(E.segs,t));if(m>prev+1e-9)mono=false;prev=m}
+  const out=[],mins=isFinite(E.end)?Math.ceil(E.end)+1:0; // scan() tests every whole minute from T+0 to the end of the plan, both included
+  const done=isFinite(E.end),cant='Not run: with these settings a stop or the habitat cannot be reached, so the plan cannot be completed.';
+  out.push({ok:done&&E.sc.worst.m>=0,t:'Rover failure tested at every minute',d:done?`${mins} simulated failures along the plan. Worst case: ${fmtDur(E.sc.worst.m)} spare.`:cant});
+  out.push({ok:done&&E.sc.ride.m>=0,t:'Suit failure tested at every minute',d:done?`${mins} simulated failures. Worst case: ${fmtDur(E.sc.ride.m)} of emergency oxygen left on arrival.`:cant});
+  out.push({ok:done&&E.timeSpare>=0,t:'Plan fits the time-in-suit limit',d:done?`${fmtDur(E.end)} planned against a ${p.maxh} h limit.`:cant});
+  let mono=true,prev=Infinity;const ci=cellXY(STOPS[0].x,STOPS[0].y);const tEnd=done?E.end:p.maxh*60; // never loop to an infinite plan end
+  for(let t=0;t<=tEnd;t+=5){const m=walkMargin(F,p,D,ci,consumed(E.segs,t));if(m>prev+1e-9)mono=false;prev=m}
   out.push({ok:mono,t:'Margin never grows while the suits run down',d:'Checked every 5 minutes at a fixed point.'});
   let bad=0,hc=cellXY(HAB.x,HAB.y),hx=HAB.x,hy=HAB.y;for(let i=0;i<W*H;i++){if(!isFinite(F.wHome.time[i]))continue;const d=Math.hypot((i%W)-hx,Math.floor(i/W)-hy)*CELL/1000*60;if(F.wHome.time[i]<d-1e-6)bad++}
   out.push({ok:bad===0,t:'Walk home is never shorter than a straight line',d:`Checked all ${W*H} cells: ${bad} violations.`});
   const first=farthestFirst(F,STOPS)[0],X2=execute(F,p,D,STOPS,{[first.id]:30}),sc2=scan(F,p,D,X2.segs,0,0).worst,pl=X2.switches[X2.switches.length-1].plan;
-  out.push({ok:sc2.m>=0&&X2.end<=p.maxh*60,t:'Running 30 min late stays safe',d:`+30 min at stop ${first.id}: gates choose plan ${pl}, home by ${fmtClock(X2.end)}, worst margin ${fmtDur(sc2.m)}.`});
+  out.push({ok:isFinite(X2.end)&&sc2.m>=0&&X2.end<=p.maxh*60,t:'Running 30 min late stays safe',d:isFinite(X2.end)?`+30 min at stop ${first.id}: gates choose plan ${pl}, home by ${fmtClock(X2.end)}, worst margin ${fmtDur(sc2.m)}.`:cant});
   return out;
 }
 function sensitivity(F,p,stops){
