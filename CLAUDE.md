@@ -117,14 +117,14 @@ Message for the slides: every single failure is covered at every minute; two fai
 
 ## Data actually used vs planned
 
-Used: HRSC terrain (ESA Mars Express), Curiosity waypoints (NASA), RAD dose rate (one value), Apollo planning numbers. HiRISE was used to verify stop sites but is not in the product.
+Used: HRSC terrain (ESA Mars Express), Curiosity waypoints (NASA), RAD dose rate (one value), Apollo planning numbers, Curiosity Mastcam and Hazcam images (stops A, B), HiRISE ESP_087149_1750 crop (stop C, orbital), REMS weather for sols 4564 to 4687.
 Gap: the challenge suggests at least three kinds of data layered. Close it with items 2 and 3 below (optical and atmospheric), giving four real kinds from two missions and two agencies.
 
 ## Remaining work, in priority order
 
 1. **Slides (7, English)**: title + team + challenge; the problem; the idea (Apollo rule on Mars, three limits); the tool (screenshots: map, crisis, Why panel); failure tested (crises, plan ladder, gates); data and validation (Apollo 3.12 vs 3.1 km, DEM vs rover 11.7 m, 444 simulated failures, sensitivity chart, honest assumptions); impact and next steps (why not a physical rope; helmet display as future work; THEMIS, REMS). Every title is a full sentence stating the takeaway. Must read without a presenter.
-2. **Optical data in the stop cards**: real images stored in the repo (NASA images are public domain; credit NASA/JPL-Caltech and MSSS where applicable). A: Altadena drill hole, Mastcam, 8 Jun 2025 (sol 4564). B: Valle de la Luna in Monte Grande, Front Hazcam, 12 Oct 2025 (sol 4687). C: a HiRISE crop of the site, labelled as orbital, keeping the line "No ground image exists yet. This is why a human goes."
-3. **Atmospheric data**: replace "to connect" for REMS with real Curiosity readings (air temperature range and pressure) for sols in the boxwork campaign, from NASA's REMS feed `https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json`. Store the values used in `data/`, with the sol range and source. Only show numbers actually read from the feed.
+2. **DONE 14 Nov (see README Data table).** **Optical data in the stop cards**: real images stored in the repo (NASA images are public domain; credit NASA/JPL-Caltech and MSSS where applicable). A: Altadena drill hole, Mastcam, 8 Jun 2025 (sol 4564). B: Valle de la Luna in Monte Grande, Front Hazcam, 12 Oct 2025 (sol 4687). C: a HiRISE crop of the site, labelled as orbital, keeping the line "No ground image exists yet. This is why a human goes."
+3. **DONE 14 Nov: `data/rems-weather.js`, sols 4564 to 4687, shown in the Environment panel.** **Atmospheric data**: replace "to connect" for REMS with real Curiosity readings (air temperature range and pressure) for sols in the boxwork campaign, from NASA's REMS feed `https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json`. Store the values used in `data/`, with the sol range and source. Only show numbers actually read from the feed.
 4. **Submission page text (English)**: project name, high-level summary, detailed description, NASA data used, Space Agency Partner and other data (ESA HRSC), use of AI, links (site, repo, slides).
 5. Sources for walking speed and suit capacity (team is searching).
 6. Optional only if time remains: THEMIS sand layer.

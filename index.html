@@ -53,6 +53,7 @@ h2{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:.08e
 .sw{width:14px;height:14px;border-radius:3px;flex:none}
 .env div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid var(--line)}
 .env div:last-child{border-bottom:0}
+.env .note{display:block;font-size:11px;line-height:1.35;color:var(--muted);padding-top:6px}
 .env span:last-child{font-family:var(--mono);color:var(--muted);text-align:right}
 .small{font-size:12px;color:var(--muted)}
 .mapbox{position:relative;background:#0b0f13;border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -141,7 +142,7 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
     <div id="verdict" class="verdict safe-c">GO FOR EVA</div>
   </header>
 
-  <div class="notice"><b>Real data.</b> Terrain: 30 m HRSC elevation map of Gale crater (ESA Mars Express; Persaud et al. 2021, CC BY 4.0). Curiosity’s track and stops A and B: NASA’s MSL waypoint file. The habitat sits on Curiosity’s sol 3038 position; stop C is a new site chosen inside the boxwork. Stop photos: Curiosity Mastcam and Hazcam (A, B) and an orbital HiRISE view (C). Rates and limits come from Apollo planning and are labelled below.</div>
+  <div class="notice"><b>Real data.</b> Terrain: 30 m HRSC elevation map of Gale crater (ESA Mars Express; Persaud et al. 2021, CC BY 4.0). Curiosity’s track and stops A and B: NASA’s MSL waypoint file. The habitat sits on Curiosity’s sol 3038 position; stop C is a new site chosen inside the boxwork. Stop photos: Curiosity Mastcam and Hazcam (A, B) and an orbital HiRISE view (C). Weather: Curiosity REMS readings for the boxwork sols. Rates and limits come from Apollo planning and are labelled below.</div>
 
   <div class="try" aria-label="Try it">
     <span><b>1</b>Drag the time slider</span>
@@ -177,9 +178,11 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
       <h2 style="margin-top:12px">Environment</h2>
       <div class="env small">
         <div><span>Dose rate (RAD)</span><span>0.67 mSv/day</span></div>
-        <div><span>Air temperature (REMS)</span><span>to connect</span></div>
-        <div><span>Dust opacity (REMS)</span><span>to connect</span></div>
+        <div><span>Air temperature (REMS)</span><span id="remsT">no data</span></div>
+        <div><span>Air pressure (REMS)</span><span id="remsP">no data</span></div>
+        <div><span>Sky (REMS feed)</span><span id="remsS">no data</span></div>
         <div><span>Soil, thermal (THEMIS)</span><span>to connect</span></div>
+        <div class="note" id="remsNote"></div>
       </div>
     </aside>
 
@@ -259,6 +262,7 @@ GO                = all three hold along the whole plan;   gates: margin &lt; ga
 
 <script src="data/terrain.js"></script>
 <script src="data/rover-track.js"></script>
+<script src="data/rems-weather.js"></script>
 <script src="js/mission.js"></script>
 <script src="js/model.js"></script>
 <script src="js/app.js"></script>

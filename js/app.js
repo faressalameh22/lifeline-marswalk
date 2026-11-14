@@ -227,3 +227,16 @@ if(typeof document!=='undefined'){
   rebuildFields();
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(render);
 }
+
+// Environment panel: real REMS readings for the boxwork sols (data/rems-weather.js). Shows only what the feed gave.
+(function(){
+  if(typeof REMS==='undefined'||!REMS.rows.length)return;
+  const r=REMS.rows,n=r.length,mn=Math.min(...r.map(x=>x[2])),mx=Math.max(...r.map(x=>x[3])),
+    pl=Math.min(...r.map(x=>x[4])),ph=Math.max(...r.map(x=>x[4])),sky={};
+  r.forEach(x=>sky[x[5]]=(sky[x[5]]||0)+1);
+  const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+  set('remsT',`${mn} to ${mx} °C`);
+  set('remsP',`${pl} to ${ph} Pa`);
+  set('remsS',Object.entries(sky).map(([k,v])=>`${k} ${v} of ${n} sols`).join(', '));
+  set('remsNote',`Curiosity REMS daily values, sols ${REMS.fromSol} to ${REMS.toSol} (${r[0][1]} to ${r[n-1][1]}), the stretch between drill sites A and B. ${n} sols in the feed. Source: NASA MSL weather feed, Centro de Astrobiología.`);
+})();
