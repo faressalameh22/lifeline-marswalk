@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIFELINE Marswalk planner</title>
+<meta name="description" content="A Marswalk planner that never sends astronauts farther than they can walk home. Team Six Seven, NASA Space Apps Challenge 2026, Nablus.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: mission-control console. Map is the hero; layers left; live status, plan ladder and gates right; crises and time below; why, backup card and model at the bottom. Single dark theme by choice. */
+:root{
+  color-scheme:dark;
+  --bg:#0F1419; --panel:#1B222B; --panel-2:#232C37; --line:#33404E;
+  --text:#F2F0EB; --muted:#9AA4AF;
+  --rust:#C1440E; --route:#3DD6F5;
+  --safe:#2EAD6B; --tight:#F2B01E; --danger:#D9342B;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;line-height:1.45}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--route);outline-offset:2px}
+.wrap{max-width:1280px;margin:0 auto;padding:16px}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.brand{font-family:var(--display);font-weight:600;font-size:30px;letter-spacing:.06em;line-height:1}
+.brand span{color:var(--rust)}
+.tag{color:var(--muted);flex:1;min-width:220px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:7px 14px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--panel-2);color:var(--text)}
+.verdict{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:.04em;padding:6px 16px;border-radius:8px;border:1px solid transparent;white-space:nowrap}
+.safe-c{background:rgba(46,173,107,.16);border-color:var(--safe);color:#7FE0AE}
+.tight-c{background:rgba(242,176,30,.16);border-color:var(--tight);color:#FFD772}
+.danger-c{background:rgba(217,52,43,.18);border-color:var(--danger);color:#FF9A93}
+.notice{margin:12px 0 8px;padding:8px 12px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:13px}
+.notice b{color:var(--text);font-weight:500}
+.try{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 12px;font-size:13px;color:var(--muted)}
+.try b{color:var(--route);font-family:var(--mono);font-weight:500;margin-right:4px}
+.alertbar{display:none;align-items:center;gap:14px;flex-wrap:wrap;border-radius:10px;padding:10px 14px;margin-bottom:12px;border:1px solid}
+.alertbar.on{display:flex}
+.alertbar .cmd{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:.03em}
+.alertbar .why{color:var(--text);opacity:.92}
+.alertbar .count{font-family:var(--mono);font-size:22px;margin-left:auto}
+.main{display:grid;grid-template-columns:200px minmax(0,1fr) 290px;gap:12px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+h2{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.layers label{display:flex;align-items:center;gap:8px;padding:3px 0;cursor:pointer}
+.layers input,.layers input{accent-color:var(--route)}
+.legend div{display:flex;align-items:center;gap:8px;padding:2px 0}
+.sw{width:14px;height:14px;border-radius:3px;flex:none}
+.env div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid var(--line)}
+.env div:last-child{border-bottom:0}
+.env span:last-child{font-family:var(--mono);color:var(--muted);text-align:right}
+.small{font-size:12px;color:var(--muted)}
+.mapbox{position:relative;background:#0b0f13;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
+.maphint{position:absolute;left:10px;top:8px;font-size:12px;color:var(--muted);background:rgba(15,20,25,.75);padding:3px 8px;border-radius:6px}
+.tiles{display:grid;gap:8px}
+.tile{background:var(--panel-2);border-radius:8px;padding:8px 12px;border-left:4px solid var(--line)}
+.tile .k{color:var(--muted);font-size:12px}
+.tile .v{font-family:var(--mono);font-weight:500;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.25}
+.tile.safe{border-left-color:var(--safe)} .tile.tight{border-left-color:var(--tight)} .tile.danger{border-left-color:var(--danger)}
+.status{margin:10px 0;color:var(--muted)} .status b{color:var(--text);font-weight:500}
+.ladder{display:grid;gap:6px;margin-bottom:10px}
+.rung{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted)}
+.rung .l{font-family:var(--display);font-weight:600;font-size:20px;line-height:1;text-align:center}
+.rung.on{border-color:var(--route);color:var(--text);box-shadow:inset 0 0 0 1px var(--route)}
+.rung.on .l{color:var(--route)}
+.rung .d{font-size:12px}
+.gates{display:grid;gap:4px;font-size:12px;color:var(--muted);margin-bottom:10px}
+.gates div{padding-left:10px;border-left:3px solid var(--line)}
+.gates .ok{border-left-color:var(--safe)} .gates .sw2{border-left-color:var(--tight)} .gates .ab{border-left-color:var(--danger)}
+.stop .photo{height:70px;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;margin:6px 0;text-align:center;padding:0 8px}
+.stop .name{font-weight:500}
+.stop label{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:var(--muted)}
+.stop input{width:64px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-family:var(--mono)}
+.bar{margin-top:12px;display:grid;gap:10px}
+.whatif{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.whatif button{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+.whatif button:hover{border-color:var(--muted)}
+.whatif button[aria-pressed="true"]{border-color:var(--route);box-shadow:inset 0 0 0 1px var(--route)}
+.whatif .sep{width:1px;height:26px;background:var(--line);margin:0 4px}
+.time{display:flex;align-items:center;gap:12px}
+.time input[type=range]{flex:1;accent-color:var(--route)}
+.clock{font-family:var(--mono);font-weight:500;font-size:18px;min-width:76px;text-align:right;font-variant-numeric:tabular-nums}
+.lower{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:12px;margin-top:12px;align-items:start}
+.reason{font-size:15px;margin:0 0 8px}
+.fixes{width:100%;border-collapse:collapse;font-size:13px}
+.fixes th,.fixes td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.fixes th{color:var(--muted);font-weight:500}
+.fixes td.n{font-family:var(--mono);text-align:right;white-space:nowrap}
+.model{margin-top:12px}
+.params{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:10px}
+.params label{display:grid;gap:4px;color:var(--muted);font-size:12px}
+.params input{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-family:var(--mono);color:var(--text);width:100%}
+.formula{font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;white-space:pre}
+.model p{max-width:78ch;color:var(--muted);margin:8px 0 0}
+.walk .tile .v{font-size:32px}
+.bigcmd{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:.03em;text-align:center;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid}
+.valid{margin-top:12px}
+.vgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.checks{display:grid;gap:8px}
+.chk{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:start;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2)}
+.chk .b{font-family:var(--mono);font-weight:500;font-size:12px;text-align:center;border-radius:6px;padding:3px 0}
+.chk .b.pass{background:rgba(46,173,107,.18);color:#7FE0AE}.chk .b.fail{background:rgba(217,52,43,.2);color:#FF9A93}
+.chk .t{font-weight:500}.chk .d{font-size:12px;color:var(--muted)}
+.tor{display:grid;gap:6px}
+.trow{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;font-size:12px}
+.trow .lab{color:var(--muted)}
+.track{position:relative;height:22px;background:var(--bg);border-radius:4px}
+.track .rng{position:absolute;top:4px;height:14px;background:var(--route);opacity:.75;border-radius:3px}
+.track .base{position:absolute;top:0;bottom:0;width:2px;background:var(--text)}
+.track .zero{position:absolute;top:0;bottom:0;width:2px;background:var(--danger)}
+.track .lo,.track .hi{position:absolute;top:3px;white-space:nowrap;font-family:var(--mono);font-size:11px;color:var(--text)}
+@media (max-width:1040px){.vgrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:1040px){.main{grid-template-columns:minmax(0,1fr)} .midcol{order:-1} .lower{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">LIFE<span>LINE</span></div>
+    <div class="tag">Never go farther than you can walk home. A Marswalk planner for the Mount Sharp boxwork, Gale Crater.</div>
+    <div class="seg" role="group" aria-label="View">
+      <button id="modePlan" aria-pressed="true">Plan</button>
+      <button id="modeWalk" aria-pressed="false">Walk</button>
+    </div>
+    <div id="verdict" class="verdict safe-c">GO FOR EVA</div>
+  </header>
+
+  <div class="notice"><b>Real data.</b> Terrain: 30 m HRSC elevation map of Gale crater (ESA Mars Express; Persaud et al. 2021, CC BY 4.0). Curiosity’s track and stops A and B: NASA’s MSL waypoint file. The habitat sits on Curiosity’s sol 3038 position; stop C is a new site chosen inside the boxwork. Rates and limits come from Apollo planning and are labelled below.</div>
+
+  <div class="try" aria-label="Try it">
+    <span><b>1</b>Drag the time slider</span>
+    <span><b>2</b>Press Rover fails</span>
+    <span><b>3</b>Press Running late and watch the gate switch to plan B</span>
+    <span><b>4</b>Drag stop C far away and read why it says NO-GO</span>
+  </div>
+
+  <div id="alertbar" class="alertbar" role="status" aria-live="polite">
+    <div class="cmd" id="alertCmd"></div><div class="why" id="alertWhy"></div><div class="count" id="alertCount"></div>
+  </div>
+
+  <div class="main">
+    <aside class="card" id="leftCol">
+      <h2>Data layers</h2>
+      <div class="layers">
+        <label><input type="checkbox" id="lyImg" checked> Shaded relief (HRSC)</label>
+        <label><input type="checkbox" id="lyMargin" checked> Walk-back margin</label>
+        <label><input type="checkbox" id="lyRide" checked> Ride-back limit</label>
+        <label><input type="checkbox" id="lySlope"> Slope</label>
+        <label class="small"><input type="checkbox" id="lySand" disabled> Sand, stuck risk (needs THEMIS)</label>
+        <label><input type="checkbox" id="lyShelter" checked> Radiation shelters</label>
+        <label><input type="checkbox" id="lyTrack" checked> Curiosity track (NASA)</label>
+      </div>
+      <h2 style="margin-top:12px">Legend</h2>
+      <div class="legend">
+        <div><span class="sw" style="background:var(--safe)"></span>Safe, above gate</div>
+        <div><span class="sw" style="background:var(--tight)"></span>Tight, below gate</div>
+        <div><span class="sw" style="background:var(--danger)"></span>No return</div>
+        <div><span class="sw" style="background:var(--route)"></span>Planned route</div>
+        <div><span class="sw" style="border:2px dashed #F2F0EB"></span>Ride-back limit</div>
+      </div>
+      <h2 style="margin-top:12px">Environment</h2>
+      <div class="env small">
+        <div><span>Dose rate (RAD)</span><span>0.67 mSv/day</span></div>
+        <div><span>Air temperature (REMS)</span><span>to connect</span></div>
+        <div><span>Dust opacity (REMS)</span><span>to connect</span></div>
+        <div><span>Soil, thermal (THEMIS)</span><span>to connect</span></div>
+      </div>
+    </aside>
+
+    <div class="midcol">
+    <div class="mapbox">
+      <canvas id="map" width="795" height="1105" aria-label="Map of the planned Marswalk with walk-back margin zones, route, stops and shelters"></canvas>
+      <div class="maphint">Drag a stop to move it. Tap anywhere to read its margin.</div>
+    </div>
+    <div class="bar card">
+    <div class="whatif" role="group" aria-label="Crises">
+      <span class="small">Crisis now:</span>
+      <button data-cr="rover" aria-pressed="false">Rover fails</button>
+      <button data-cr="suit" aria-pressed="false">Suit failure</button>
+      <button data-cr="injured" aria-pressed="false">Crew injured</button>
+      <button data-cr="storm" aria-pressed="false">Solar storm</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button id="late">Running late +15 min</button>
+      <button id="clear">Clear all</button>
+      <span class="small" id="lateNote"></span>
+    </div>
+    <div class="time">
+      <label for="tSlider" class="small">EVA time</label>
+      <input type="range" id="tSlider" min="0" max="480" step="1" value="40">
+      <div class="clock" id="clock">T+0:40</div>
+    </div>
+  </div>
+
+    </div>
+
+    <aside class="card" id="rightCol"></aside>
+  </div>
+
+  <div class="lower">
+    <section class="card" id="whyCard" aria-live="polite"></section>
+    <section class="card" id="backupCard"></section>
+  </div>
+
+  <section class="card valid" id="validCard" aria-live="polite">
+    <h2>Validation: does the model work?</h2>
+    <div class="vgrid">
+      <div><div class="checks" id="checks"></div></div>
+      <div>
+        <div class="small" style="margin-bottom:8px">Sensitivity: tightest walk-back margin of the current plan when one assumption moves by ±20% (payload 0 to 20 kg, pad 10 to 30%). The white line is today's value; the longest bars are the numbers worth sourcing first.</div>
+        <div class="tor" id="tornado"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card model">
+    <h2>Model and assumptions</h2>
+    <div class="params">
+      <label for="pSpeed">Walking speed, flat (km/h)<input id="pSpeed" type="number" min="0.5" max="6" step="0.1" value="2.5"></label>
+      <label for="pO2">Suit oxygen at start (h, nominal work)<input id="pO2" type="number" min="2" max="12" step="0.5" value="8"></label>
+      <label for="pH2O">Cooling water at start (h, nominal work)<input id="pH2O" type="number" min="2" max="12" step="0.5" value="7.5"></label>
+      <label for="pEmerg">Emergency oxygen (min)<input id="pEmerg" type="number" min="10" max="180" step="1" value="57"></label>
+      <label for="pPad">Safety pad (%)<input id="pPad" type="number" min="0" max="60" step="5" value="20"></label>
+      <label for="pGate">Gate: minimum margin to continue (min)<input id="pGate" type="number" min="0" max="120" step="5" value="30"></label>
+      <label for="pLoad">Payload carried (kg)<input id="pLoad" type="number" min="0" max="40" step="1" value="10"></label>
+      <label for="pSlope">Slope limit (degrees)<input id="pSlope" type="number" min="10" max="30" step="1" value="25"></label>
+      <label for="pSand">Walking slowdown on sand (%)<input id="pSand" type="number" min="0" max="80" step="5" value="40"></label>
+      <label for="pRover">Rover speed (km/h)<input id="pRover" type="number" min="2" max="20" step="1" value="8"></label>
+      <label for="pRoverE">Rover emergency speed (km/h)<input id="pRoverE" type="number" min="2" max="20" step="1" value="10"></label>
+      <label for="pStation">Time at each stop (min)<input id="pStation" type="number" min="5" max="180" step="5" value="45"></label>
+      <label for="pMax">Max time in suit (h)<input id="pMax" type="number" min="2" max="10" step="0.25" value="4.25"></label>
+      <label for="pWarn">Storm warning time (min)<input id="pWarn" type="number" min="5" max="180" step="5" value="30"></label>
+    </div>
+    <div class="formula">walk_speed(cell)  = flat_speed × e^(−0.045·slope°) × sand_factor × load_factor     impassable above the slope limit
+walk_home(cell)   = fastest walking time to the habitat over the terrain                     (Dijkstra, 8 directions)
+reserve(t)        = min(oxygen, cooling water) − Σ activity_rate × minutes                     drive 0.67 · work 1.00 · walk 1.14
+walk-back margin  = reserve(t) ÷ walk_rate − (1 + pad) × walk_home                           if the rover fails
+ride-back margin  = emergency_O2 − (1 + pad) × ride_home at emergency speed                  if the suit fails
+time limit        = the whole plan ends inside the max time in suit
+GO                = all three hold along the whole plan;   gates: margin &lt; gate → plan B (drop lowest science) → plan C (go home)</div>
+    <p>Terrain is the 30 m HRSC elevation map (ESA Mars Express), checked against Curiosity’s own altitudes in the validation panel; sand is not modelled until the THEMIS layer is connected. The two limits come from Apollo traverse planning. The walk-back limit protected the crew if the rover failed; the ride-back limit protected them if the backpack failed, using its emergency oxygen supply of about 0.95 h and an emergency rover speed of 10 km/h. Activity rates are the Apollo metabolic rates for riding, station work and walking (700, 1050 and 1200 BTU/h), scaled to station work. A 1970 Apollo planning study found the time-in-suit limit, then 5 h, usually capped riding traverses. The crew drives to the farthest stop first so the walk home shrinks as the suits run down. Walking speed on Mars, suit capacities, the payload effect (−0.5% speed and +1% effort per kg), the injured-crew factor (half speed, +30% effort), the 4.25 h suit limit used here and the storm warning time are team assumptions to be sourced. Lowering the safety pad is never offered as a fix.</p>
+  </section>
+</div>
+
+<script src="data/terrain.js"></script>
+<script src="data/rover-track.js"></script>
+<script src="js/mission.js"></script>
+<script src="js/model.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
