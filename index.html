@@ -98,7 +98,7 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
 .whatif button[aria-pressed="true"]{border-color:var(--route);box-shadow:inset 0 0 0 1px var(--route)}
 .whatif .sep{width:1px;height:26px;background:var(--line);margin:0 4px}
 .time{display:flex;align-items:center;gap:12px}
-.time input[type=range]{flex:1;accent-color:var(--route)}
+.time input[type=range]{flex:1;accent-color:var(--route);min-height:32px;cursor:pointer}
 .clock{font-family:var(--mono);font-weight:500;font-size:18px;min-width:76px;text-align:right;font-variant-numeric:tabular-nums}
 .lower{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:12px;margin-top:12px;align-items:start}
 .reason{font-size:15px;margin:0 0 8px}
@@ -131,6 +131,7 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
 .track .lo,.track .hi{position:absolute;top:3px;white-space:nowrap;font-family:var(--mono);font-size:11px;color:var(--text)}
 @media (max-width:1040px){.vgrid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:1040px){.main{grid-template-columns:minmax(0,1fr)} .midcol{order:-1} .lower{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:600px){.maphint{max-width:50%;font-size:11px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -269,7 +270,7 @@ GO                = all three hold along the whole plan;   gates: margin &lt; ga
       <li><b>Team assumptions, not sourced:</b> walking speed on Mars 2.5 km/h; cooling water 7.5 h (the tightest consumable in the model); the slope slowdown e^(−0.045·slope°); payload effect (−0.5% speed, +1% effort per kg); injured-crew factor (half speed, +30% effort); time in suit 4.25 h; storm warning 30 min. For walking speed, NASA suited tests [4] found a 10 km walk in lunar gravity took 96 min (1.74 m/s), but in Mars gravity subjects neared maximum effort at 1.5 m/s, so a Mars walk must be much slower; 2.5 km/h (0.69 m/s) sits below both, and below Apollo’s 3.3 km/h. The sensitivity chart shows what each assumption costs.</li>
     </ul>
     <ol class="refs small">
-      <li>P. Benjamin, <i>Apollo 15 EVA Capability and Constraints Envelopes</i>, Bellcomm memorandum B70 10028 (Case 320), 13 Oct 1970, NASA-CR-111182 (N79-73020). Not in NTRS; archived by NASA’s Apollo Lunar Surface Journal: <a href="https://www.nasa.gov/wp-content/uploads/static/history/alsj/19790073512_1979073512.pdf">nasa.gov PDF</a> (<a href="https://web.archive.org/web/2019/https://www.hq.nasa.gov/alsj/19790073512_1979073512.pdf">archived copy</a>).</li>
+      <li>P. Benjamin, <i>Apollo 15 EVA Capability and Constraints Envelopes</i>, Bellcomm memorandum B70 10028 (Case 320), 13 Oct 1970, NASA-CR-111182 (N79-73020). Not in NTRS; first published in NASA’s Apollo Lunar Surface Journal, whose link no longer works: <a href="data/refs/NASA-CR-111182_Apollo15_EVA_Capability_and_Constraints_Envelopes_1970.pdf">copy kept in this project</a> (<a href="https://web.archive.org/web/2019/https://www.hq.nasa.gov/alsj/19790073512_1979073512.pdf">Internet Archive copy of the NASA original</a>).</li>
       <li>D. Coan, <i>NASA Exploration EVA Integrated HITL Testing and Analogs</i>, NASA JSC, Feb 2021, p. 8: <a href="https://ntrs.nasa.gov/citations/20210000827">NTRS 20210000827</a>.</li>
       <li>D. M. Hassler et al., <i>Mars’ Surface Radiation Environment Measured with the Mars Science Laboratory’s Curiosity Rover</i>, Science 343 (6169), 2014, <a href="https://doi.org/10.1126/science.1244797">doi:10.1126/science.1244797</a>; <a href="https://ntrs.nasa.gov/citations/20180007641">NTRS 20180007641</a>.</li>
       <li>J. R. Norcross et al., <i>Feasibility of Performing a Suited 10-km Ambulation on the Moon: Final Report of the EVA Walkback Test</i>, NASA/TP-2009-214796, Oct 2009 (<a href="https://www.lpi.usra.edu/lunar/artemis/NorcrossEtAl_NASA-TP-2009-214796_EVA%20Walkback%20Test.pdf">PDF</a>); and <i>Metabolic Costs and Biomechanics of Level Ambulation in a Planetary Suit</i>, NASA/TP-2010-216115, Feb 2010 (<a href="https://www.lpi.usra.edu/lunar/artemis/NorcrossEtAl_NASA-TP-2010-216115_PlanetarySuitMetabolicCosts.pdf">PDF</a>).</li>
