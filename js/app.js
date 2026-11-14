@@ -1,5 +1,7 @@
 // LIFELINE user interface: map drawing, panels and controls.
-if(typeof document!=='undefined'){
+// The UI runs inside its own function: older Safari (iOS) mis-scopes functions declared directly inside an if-block
+// at the top level, and failed with 'Can't find variable: params'. A function scope behaves the same everywhere.
+if(typeof document!=='undefined')(function(){
   const $=id=>document.getElementById(id);
   const cv=$('map'),ctx=cv.getContext('2d',{willReadFrequently:true}),S=cv.width/W; // CPU canvas: the 3D view reads it as a texture without a GPU stall
   const off=document.createElement('canvas');off.width=W;off.height=H;const octx=off.getContext('2d');
@@ -242,7 +244,7 @@ if(typeof document!=='undefined'){
 
   const toCell=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W-.5,y:(e.clientY-r.top)/r.height*H-.5}};
   let raf=0;
-  cv.addEventListener('pointerdown',e=>{const q=toCell(e);const hit=STOPS.map(s=>({s,d:Math.hypot(s.x-q.x,s.y-q.y)})).filter(o=>o.d<3.5).sort((a,b)=>a.d-b.d)[0]?.s;state.moved=false;if(hit){state.drag=hit;state.sel=hit.id;cv.setPointerCapture(e.pointerId)}});
+  cv.addEventListener('pointerdown',e=>{const q=toCell(e);const hitO=STOPS.map(s=>({s,d:Math.hypot(s.x-q.x,s.y-q.y)})).filter(o=>o.d<3.5).sort((a,b)=>a.d-b.d)[0],hit=hitO&&hitO.s;state.moved=false;if(hit){state.drag=hit;state.sel=hit.id;cv.setPointerCapture(e.pointerId)}});
   cv.addEventListener('pointermove',e=>{if(!state.drag)return;const q=toCell(e),x=Math.round(Math.max(1,Math.min(W-2,q.x))),y=Math.round(Math.max(1,Math.min(H-2,q.y)));
     if(T.slope[y*W+x]>p.slope)return;if(x===state.drag.x&&y===state.drag.y)return;state.drag.x=x;state.drag.y=y;state.moved=true;
     if(!raf)raf=requestAnimationFrame(()=>{raf=0;F.rStop[state.drag?state.drag.id:'C']=dijkstra(F.rv,[cellXY((state.drag||STOPS[2]).x,(state.drag||STOPS[2]).y)]);replan()})});
@@ -251,7 +253,7 @@ if(typeof document!=='undefined'){
 
   rebuildFields();
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(render);
-}
+})();
 
 // Environment panel: real REMS readings for the boxwork sols (data/rems-weather.js). Shows only what the feed gave.
 (function(){
