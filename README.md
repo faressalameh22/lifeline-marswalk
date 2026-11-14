@@ -17,7 +17,7 @@ Challenge: *Interplanetary Survival Guide: Martian Map*.
 3. Press **Running late**. At the next stop the decision gate switches to plan B and skips the lowest-science stop.
 4. Drag stop **C** far away. The verdict turns to **NO-GO**, and the *Why NO-GO* panel lists the changes that would make it safe.
 
-Press **3D** at the top to see the same map draped over the real HRSC terrain (heights exaggerated three times). It is a view only: stops are dragged on the 2D map and the 3D view follows live.
+Press **3D** at the top to see the same map draped over the real HRSC terrain (heights exaggerated three times). It is a view only: stops are dragged on the 2D map and the 3D view follows live. Pinch or scroll to zoom toward a spot (down to about 1 km, the limit of the 30 m terrain data), drag with one finger to tilt and look at the ridges from the side, and use two fingers to pan.
 
 ## The idea
 
@@ -79,6 +79,7 @@ Two more test scripts back the numbers and the page itself:
 
 - `node tests/audit-numbers.js` recomputes every number quoted in this README, the submission text and the slides (crisis table, running-late table, sensitivity) from the model.
 - `node tests/verify-raw-data.mjs` checks the raw data against the original sources: every terrain cell against the Zenodo GeoTIFF, and the habitat and stops against NASA's current Curiosity waypoint file. Results and the stop C HiRISE check are in [`docs/verification/`](docs/verification/README.md).
+- `node tests/touch-3d.mjs` pinches, tilts and resets the 3D view with real touch events on a phone-sized screen.
 - `node tests/edge-browser.mjs` (serve the folder on port 8790 first) drives the real page in headless Chrome through every crisis combination, repeated delays, out-of-range inputs and dragged stops, and fails on any console error, on "NaN", "undefined" or "Infinity" in the page, or on a verdict that differs from an independent run of the model.
 
 | Check | Result |

@@ -225,7 +225,7 @@ if(typeof document!=='undefined'){
     if(v3d||v3dLoading)return;
     let ok=false;try{const t=document.createElement('canvas');ok=!!(t.getContext('webgl2')||t.getContext('webgl'))}catch(e){}
     if(!ok){$('v3dMsg').textContent='This device or browser cannot show 3D (WebGL is not available). The 2D map has everything the 3D view shows.';return}
-    v3dLoading=import('./view3d.js').then(m=>{v3d=m.start($('v3d'),cv);$('v3dMsg').remove()}).catch(e=>{console.warn('3D view failed to load:',e);v3dLoading=null;$('v3dMsg').textContent='The 3D view could not load (it needs an internet connection the first time). The 2D map has everything the 3D view shows.'});
+    v3dLoading=import('./view3d.js').then(m=>{v3d=m.start($('v3d'),cv);window.__lifeline3d=v3d;$('v3dMsg').remove()}).catch(e=>{console.warn('3D view failed to load:',e);v3dLoading=null;$('v3dMsg').textContent='The 3D view could not load (it needs an internet connection the first time). The 2D map has everything the 3D view shows.'});
   };
   const close3d=()=>{$('view3dBox').hidden=true;document.body.classList.remove('with3d')};
   const setMode=m=>{state.mode=m;$('modePlan').setAttribute('aria-pressed',String(m==='plan'));$('modeWalk').setAttribute('aria-pressed',String(m==='walk'));$('mode3d').setAttribute('aria-pressed',String(m==='3d'));m==='3d'?open3d():close3d();render()};
