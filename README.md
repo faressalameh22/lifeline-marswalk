@@ -56,8 +56,13 @@ Crises in the demo: rover failure, suit failure, injured crew member, solar stor
 | Surface radiation | Hassler et al. (2014), *Science*: 0.67 mSv/day measured by Curiosity's RAD at Gale Crater |
 | Walk-back and ride-back limits, activity rates, 20% pad | Apollo traverse planning documents (NASA) |
 | Boxwork science | NASA Curiosity mission blog posts, 2025 |
+| Stop photo A | Curiosity Mastcam (left), sol 4564, 8 Jun 2025, raw image `4564ML1077420021801947E01` (Altadena drill hole). Credit NASA/JPL-Caltech/MSSS. From NASA's [raw image archive](https://mars.nasa.gov/msl/multimedia/raw-images/) |
+| Stop photo B | Curiosity Front Hazcam (left), sol 4687, 12 Oct 2025, raw image `FLB_813578617EDR_F1191722FHAZ00302M`. Credit NASA/JPL-Caltech |
+| Stop view C (orbital) | MRO HiRISE `ESP_087149_1750` (28 Feb 2025), RED browse product (about 3 m/pixel), crop of 240 x 240 pixels (about 710 m) centred on stop C using the label's equirectangular projection. Credit NASA/JPL-Caltech/University of Arizona. No ground image of stop C exists |
 
-Not yet connected: THEMIS thermal (sand), REMS weather, Curiosity photos for the stop cards.
+Not yet connected: THEMIS thermal (sand), REMS weather.
+
+Stop images are stored in `data/img/` (NASA images are public domain).
 
 The terrain slice was read directly from the Zenodo GeoTIFF with HTTP range requests (the file is uncompressed float32, one row per strip), then stored in `data/terrain.js` at 0.2 m precision.
 

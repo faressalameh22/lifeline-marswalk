@@ -74,6 +74,15 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
 .gates div{padding-left:10px;border-left:3px solid var(--line)}
 .gates .ok{border-left-color:var(--safe)} .gates .sw2{border-left-color:var(--tight)} .gates .ab{border-left-color:var(--danger)}
 .stop .photo{height:70px;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;margin:6px 0;text-align:center;padding:0 8px}
+.stop .pic{margin:6px 0}
+.stop .pic .frame{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#000}
+.stop .pic img{display:block;width:100%;max-height:220px;object-fit:cover}
+.stop .pic.orb .frame{max-width:260px}
+.stop .pic.orb img{aspect-ratio:1/1;max-height:none}
+.stop .pic .ring{position:absolute;left:50%;top:50%;width:12%;aspect-ratio:1/1;transform:translate(-50%,-50%);border:2px solid var(--route);border-radius:50%}
+.stop .pic .otag{position:absolute;left:6px;top:6px;min-width:0;flex:none;font-size:10px;letter-spacing:.06em;padding:2px 6px;border-radius:4px;background:rgba(15,20,25,.8);color:var(--route)}
+.stop .pic figcaption{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}
+.stop .pic .cr{white-space:nowrap}
 .stop .name{font-weight:500}
 .stop label{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:var(--muted)}
 .stop input{width:64px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-family:var(--mono)}
@@ -132,7 +141,7 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
     <div id="verdict" class="verdict safe-c">GO FOR EVA</div>
   </header>
 
-  <div class="notice"><b>Real data.</b> Terrain: 30 m HRSC elevation map of Gale crater (ESA Mars Express; Persaud et al. 2021, CC BY 4.0). Curiosity’s track and stops A and B: NASA’s MSL waypoint file. The habitat sits on Curiosity’s sol 3038 position; stop C is a new site chosen inside the boxwork. Rates and limits come from Apollo planning and are labelled below.</div>
+  <div class="notice"><b>Real data.</b> Terrain: 30 m HRSC elevation map of Gale crater (ESA Mars Express; Persaud et al. 2021, CC BY 4.0). Curiosity’s track and stops A and B: NASA’s MSL waypoint file. The habitat sits on Curiosity’s sol 3038 position; stop C is a new site chosen inside the boxwork. Stop photos: Curiosity Mastcam and Hazcam (A, B) and an orbital HiRISE view (C). Rates and limits come from Apollo planning and are labelled below.</div>
 
   <div class="try" aria-label="Try it">
     <span><b>1</b>Drag the time slider</span>

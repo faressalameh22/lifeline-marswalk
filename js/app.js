@@ -142,7 +142,7 @@ if(typeof document!=='undefined'){
       <h2>Plan ladder</h2>${ladderHTML(c.plan)}
       <h2>Decision gates</h2><div class="gates">${gl.length?gl.map(gt=>`<div class="${gt.cls}">${gt.text}</div>`).join(''):'<div>First gate: leaving the first stop.</div>'}</div>
       <h2>Selected stop</h2><div class="stop"><div class="name">${sel.name}</div>
-      <div class="photo">${sel.photo}</div><div class="small">${(()=>{const ll=toLL(sel.x,sel.y);return ll.lat.toFixed(5)+", "+ll.lon.toFixed(5)+" · "+Math.round(T.z[sc])+" m · "+(sel.real?"Curiosity site":"new site")})()}</div>
+      ${sel.img?`<figure class="pic${sel.orbital?' orb':''}"><div class="frame"><img src="${sel.img}" alt="${sel.photo}"${sel.focus?` style="object-position:${sel.focus}"`:''}>${sel.orbital?'<span class="ring"></span><span class="otag">ORBITAL</span>':''}</div><figcaption>${sel.cap} <span class="cr">Credit: ${sel.credit}</span></figcaption></figure>`:`<div class="photo">${sel.photo}</div>`}<div class="small">${(()=>{const ll=toLL(sel.x,sel.y);return ll.lat.toFixed(5)+", "+ll.lon.toFixed(5)+" · "+Math.round(T.z[sc])+" m · "+(sel.real?"Curiosity site":"new site")})()}</div>
       <div>${sel.goal}</div>
       <label for="val">Science value (1 to 5)<input id="val" type="number" min="1" max="5" step="1" value="${sel.value}"></label>
       <div class="small">Walk home from here: ${fmtDur(F.wHome.time[sc]/D.walkSpeed)}</div></div>`;
