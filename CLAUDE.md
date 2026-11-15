@@ -75,6 +75,7 @@ data/refs/               copy of the Apollo 15 memo NASA-CR-111182 (the NASA URL
 docs/verification/       raw-data verification report and HiRISE overlays for stop C
 docs/user-test/          5-minute user-test protocol (not run yet; no results may be claimed)
 docs/site-guide-ar.md    Arabic walkthrough of every part of the site
+docs/video-handoff.md    brief for making the project video (facts, assets, credits, script, rules)
 slides/                  submission.html -> LIFELINE-submission.pdf (7 self-explaining slides for the submission),
                          index.html -> LIFELINE-slides.pdf (presentation deck), shots/, shots.mjs, render.mjs, cdp.mjs,
                          speaker-notes(.md / -ar.md), qa-prep(.md / -ar.md)
