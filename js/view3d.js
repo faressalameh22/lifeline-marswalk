@@ -75,7 +75,7 @@ function albedo(zmin,zmax,Zs){
   g.putImageData(img,0,0);return c;
 }
 
-export function start(container, mapCanvas, getScene){
+export function start(container, mapCanvas, getScene, onFence){
   const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -177,7 +177,9 @@ export function start(container, mapCanvas, getScene){
   const buildFence=f=>{
     const sig=f?[ex,Math.round(f.limit*2)/2,f.on].join():'off'; if(sig===fenceSig)return; fenceSig=sig;
     if(fence){scene.remove(fence);fence.geometry.dispose();fence=null} if(fenceTop){scene.remove(fenceTop);fenceTop.geometry.dispose();fenceTop=null}
-    if(!f||!f.on||!isFinite(f.limit)||f.limit<=0)return;
+    const report=info=>{if(onFence)onFence(info)};
+    if(!f||!f.on){report({state:'hidden'});return}
+    if(!isFinite(f.limit)||f.limit<=0){report({state:'none'});return}
     const v=f.field,L=f.limit,val=i=>isFinite(v[i])?v[i]:0,segs=[];   // no-go cells count as inside: the fence marks reach, not obstacles
     const lerp=(a,b,va,vb)=>{const t=(L-va)/(vb-va);return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]};
     for(let y=0;y<H-1;y++)for(let x=0;x<W-1;x++){                      // marching squares on the walk-home time field
@@ -187,12 +189,13 @@ export function start(container, mapCanvas, getScene){
       const CASES={1:[[3,0]],2:[[0,1]],3:[[3,1]],4:[[1,2]],5:[[3,0],[1,2]],6:[[0,2]],7:[[3,2]],8:[[2,3]],9:[[0,2]],10:[[0,1],[2,3]],11:[[1,2]],12:[[1,3]],13:[[0,1]],14:[[3,0]]}[c];
       for(const [a,b] of CASES)segs.push(e(a),e(b));
     }
-    if(!segs.length)return;
-    const vtx=[],top=[];
+    if(!segs.length){report({state:'all'});return}
+    const vtx=[],top=[];let len=0;
     for(let k=0;k<segs.length;k+=2){const a=world(segs[k][0],segs[k][1]),b=world(segs[k+1][0],segs[k+1][1]);
-      vtx.push(a.x,a.y,a.z,b.x,b.y,b.z,b.x,b.y+FENCE_H,b.z, a.x,a.y,a.z,b.x,b.y+FENCE_H,b.z,a.x,a.y+FENCE_H,a.z);top.push(a.x,a.y+FENCE_H,a.z,b.x,b.y+FENCE_H,b.z)}
+      len+=Math.hypot(b.x-a.x,b.z-a.z);vtx.push(a.x,a.y,a.z,b.x,b.y,b.z,b.x,b.y+FENCE_H,b.z, a.x,a.y,a.z,b.x,b.y+FENCE_H,b.z,a.x,a.y+FENCE_H,a.z);top.push(a.x,a.y+FENCE_H,a.z,b.x,b.y+FENCE_H,b.z)}
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vtx,3));fence=new THREE.Mesh(g,fenceMat);fence.renderOrder=5;scene.add(fence);
     const gl=new THREE.BufferGeometry();gl.setAttribute('position',new THREE.Float32BufferAttribute(top,3));fenceTop=new THREE.LineSegments(gl,fenceTopMat);scene.add(fenceTop);
+    report({state:'shown',km:len/1000});
   };
 
   // ---- camera, controls ----

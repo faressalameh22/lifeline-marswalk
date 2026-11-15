@@ -150,6 +150,10 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
 .v3d-tools input[type=checkbox]{accent-color:#36E0C0}
 .v3d-tools b{color:var(--text);font-family:var(--mono);font-weight:500}
 .v3d-views button{padding:4px 10px;font-size:12px;white-space:nowrap}
+.v3d-fence-note{font-size:12px;line-height:1.4;padding:6px 10px;margin-bottom:8px;border-radius:8px;border:1px solid rgba(54,224,192,.45);background:rgba(54,224,192,.08);color:var(--text)}
+.v3d-fence-note:empty{display:none}
+.v3d-fence-note.none{border-color:var(--danger);background:rgba(217,52,43,.12)}
+.v3d-fence-note.hidden{border-color:var(--line);background:transparent;color:var(--muted)}
 .v3d-profile{display:block;width:100%;height:130px;margin-top:8px;background:rgba(15,20,25,.5);border:1px solid var(--line);border-radius:8px}
 .v3d-head button{background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--muted);padding:4px 10px;cursor:pointer}
 .v3d{position:relative;width:100%;aspect-ratio:795/1105;background:linear-gradient(to bottom,#1a110c 0%,#2a1911 45%,#4a2c1d 100%);border-radius:8px;overflow:hidden;touch-action:none}
@@ -240,6 +244,7 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
         <label class="small"><input id="v3dSteep" type="checkbox" checked> Steep slopes</label>
         <div class="seg v3d-views" role="group" aria-label="3D views"><button type="button" data-view="overview">Overview</button><button type="button" data-view="crew">Crew view</button><button type="button" data-view="top">Top</button></div>
       </div>
+      <div class="v3d-fence-note" id="v3dFenceNote" role="status" aria-live="polite"></div>
       <div class="v3d" id="v3d"><div class="v3d-msg" id="v3dMsg">Loading the 3D view…</div></div>
       <canvas class="v3d-profile" id="v3dProfile" aria-label="Elevation profile along the planned route"></canvas>
       <div class="small" id="v3dProfileNote"></div>

@@ -232,7 +232,7 @@ if(typeof document!=='undefined')(function(){
     if(v3d||v3dLoading)return;
     let ok=false;try{const t=document.createElement('canvas');ok=!!(t.getContext('webgl2')||t.getContext('webgl'))}catch(e){}
     if(!ok){$('v3dMsg').textContent='This device or browser cannot show 3D (WebGL is not available). The 2D map has everything the 3D view shows.';return}
-    v3dLoading=import('./view3d.js').then(m=>{v3d=m.start($('v3d'),cv,scene3d);window.__lifeline3d=v3d;setLook($('lookMargins').getAttribute('aria-pressed')==='true'?'margins':'mars');drawProfile();$('v3dMsg').remove()}).catch(e=>{console.warn('3D view failed to load:',e);v3dLoading=null;$('v3dMsg').textContent='The 3D view could not start on this browser (it needs WebGL, a recent browser such as Safari 16.4 or later, and an internet connection the first time). The 2D map has everything the 3D view shows.'});
+    v3dLoading=import('./view3d.js').then(m=>{v3d=m.start($('v3d'),cv,scene3d,fenceNote);window.__lifeline3d=v3d;setLook($('lookMargins').getAttribute('aria-pressed')==='true'?'margins':'mars');drawProfile();$('v3dMsg').remove()}).catch(e=>{console.warn('3D view failed to load:',e);v3dLoading=null;$('v3dMsg').textContent='The 3D view could not start on this browser (it needs WebGL, a recent browser such as Safari 16.4 or later, and an internet connection the first time). The 2D map has everything the 3D view shows.'});
   };
   // What the 3D "Terrain" look draws on top of the relief: the same route, stops, crew and crisis path as the 2D map.
   function scene3d(){
@@ -243,6 +243,14 @@ if(typeof document!=='undefined')(function(){
     const used=usedAt(state.t),limit=Math.max(0,(D.cap-used)/D.walkRate)*D.walkSpeed/D.pad;
     return {drives:X.segs.filter(s=>s.type==='drive').map(s=>({cells:s.path,done:s.t1<=state.t})),stops:STOPS.map(s=>({id:s.id,x:s.x,y:s.y,skipped:!visited.has(s.id)})),hab:HAB,crew:{x:pos.x,y:pos.y},crisisPath,crisisShelter,
       fence:{field:F.wHome.time,limit,on:$('v3dFence').checked},slopeLimit:p.slope};
+  }
+  // One line above the 3D view says what the safety fence shows right now, so it is understood at first glance.
+  function fenceNote(info){
+    const el=$('v3dFenceNote');if(!el)return;const t=fmtClock(state.t);el.className='v3d-fence-note '+info.state;
+    el.textContent=info.state==='hidden'?'Safety fence hidden.':info.state==='none'?`Safety fence at ${t}: the reserve could no longer cover a walk home from anywhere. Turn back now.`:
+      info.state==='all'?`Safety fence at ${t}: every point on this map is still within walking reach of home if the rover failed. Move the time slider to watch the fence close in.`:
+      info.km<1?`Safety fence at ${t}: only ${info.km.toFixed(1)} km of fence, at the edge of this map; almost all of it is still within walking reach of home. Move the time slider to watch the fence close in.`:
+      `Safety fence at ${t}: ${info.km.toFixed(1)} km of fence on this map. Beyond the teal wall the crew could not walk home if the rover failed now.`;
   }
   function drawProfile(){
     const c=$('v3dProfile');if(!c||$('view3dBox').hidden||!X)return;
