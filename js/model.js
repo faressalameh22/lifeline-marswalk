@@ -197,7 +197,7 @@ function planChecks(F,p,D,E){
 }
 function sensitivity(F,p,stops){
   const base=evaluateDesign(F,p,derived(p),stops).sc.worst.m;
-  const vary=[['Walking speed','speed',.8,1.2],['Suit capacity','cap',.8,1.2],['Time at each stop','station',.8,1.2],['Rover speed','rover',.8,1.2],['Payload','load',null,null],['Safety pad','pad',null,null]];
+  const vary=[['Walking speed','speed',.8,1.2],['Suit capacity (oxygen and cooling water)','cap',.8,1.2],['Time at each stop','station',.8,1.2],['Rover speed','rover',.8,1.2],['Payload','load',null,null],['Safety pad','pad',null,null]];
   const rows=vary.map(([lab,key,a,b])=>{
     const mk=f=>{const q={...p};if(key==='cap'){q.o2=p.o2*f;q.h2o=p.h2o*f}else q[key]=p[key]*f;return q};
     let lo,hi,la,lb;

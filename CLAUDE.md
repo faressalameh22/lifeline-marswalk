@@ -115,7 +115,7 @@ The command line has no GitHub login. Commit locally, then the team presses **Pu
 - **NASA Artemis suit plan**: *xEVA System Concept of Operations*, EVA-EXP-0042 Rev B (Oct 2020). p. 40: walking ~2 km/h on level regolith. pp. 29, 36: EVAs up to 8 h, nominal 6 ± 2 h. p. 41: a second rover that can rescue the crew.
 - Context for walking on Mars: NASA/TP-2009-214796 and TP-2010-216115 (suited subjects near maximum effort at 1.5 m/s in Mars gravity).
 - DEFAULTS: speed 2.0 km/h, O2 8 h, water 8 h, emergency O2 57 min, pad 20%, gate 30 min, payload 10 kg, slope limit 25°, sand 40% (unused until THEMIS), rover 8 / emergency 10 km/h, station 30 min, max EVA 6 h, start 08:00, storm warning 30 min.
-- **Still team choices** (labelled on the page): 30 min per stop, 08:00 start, slope term e^(−0.045·slope°), payload effect, injured factor (half speed, +30% effort), 30 min storm warning, terrain shelter rule (flat ground < 10° at the foot of a slope > 18°).
+- **Still team choices** (labelled on the page): 30 min per stop, 08:00 start, slope term e^(−0.045·slope°), payload effect, injured factor (half speed, +30% effort), 30 min storm warning, 30 min gate, 25° slope limit, terrain shelter rule (flat ground < 10° at the foot of a slope > 18°).
 
 ## Current results (default values; verify with tests/audit-numbers.js)
 
@@ -146,6 +146,7 @@ Crisis logic: the crew must always get home on the reserve; a solar storm adds "
 - Real stop images; REMS data; submission text; raw data verified; stop C distance corrected to ~60 m.
 - Bugs fixed: page froze on a huge typed value (inputs clamped) and at slope limit 10 (infinite loop); pressing C grabbed B; favicon console error; failure count 223 → now 178 per crisis with the new plan; older iPad Safari blank map ("Can't find variable: params", fixed with an IIFE); a storm made double failures look safe; 3D pinch drifted on a scrolled page.
 - Team decisions: A → B → C order; keep the 30 min gate; NASA Artemis suit values + 30 min stops; Realistic Mars 3D; skip the user test for now (no results may be claimed); no extra crises or shelters.
+- UI review fixes (15 Nov, after the freeze, team-approved items 1, 2, 4, 5, 6, 7, 11): the 15 assumption inputs and Science value are `type="text" inputmode="decimal|numeric"` so every browser shows Latin digits (Arabic-Indic digits typed in are read as numbers; min/max clamping unchanged); a dragged stop says "moved … from the original site; the photo and notes show the original site" instead of "Curiosity site"; gate (30 min) and slope limit (25°) listed under team choices; Why-GO line explains the gate applies to the rover-failure margin and the suit margin only has to stay above zero (tight below 10 min); sensitivity row "Suit capacity (oxygen and cooling water)"; wrist tiles "Margin (rover fails)" (crisis name during a crisis) and "Next: … (straight line)". Not done: item 3 ("Turn back by" counts only suit capacity to zero margin, not the 6 h or sunset limits; it differs from the backup card's Leave by, which keeps the gate). Slide screenshots still show the old wording.
 
 ## If more time
 

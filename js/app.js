@@ -10,7 +10,10 @@ if(typeof document!=='undefined')(function(){
   const KEYS=['speed','o2','h2o','emerg','pad','gate','load','slope','sand','rover','roverE','station','warn','maxh','start'];
   // Read the assumption inputs. Empty or non-numeric text falls back to the default; values outside the
   // input's min/max are clamped and written back, so a typed 0, negative or huge value can never reach the model.
-  const params=()=>{const o={};IDS.forEach((id,k)=>{const el=$(id);let v=parseFloat(el.value);if(!isFinite(v))v=parseFloat(el.defaultValue);
+  // The inputs are type="text" (inputmode decimal) so every browser shows Latin digits 0-9, whatever its language;
+  // Arabic-Indic digits typed on an Arabic keyboard are read as the same numbers.
+  const latin=s=>String(s).replace(/[\u0660-\u0669]/g,d=>d.charCodeAt(0)-0x660).replace(/[\u06F0-\u06F9]/g,d=>d.charCodeAt(0)-0x6F0).replace(/[\u066B,]/g,'.');
+  const params=()=>{const o={};IDS.forEach((id,k)=>{const el=$(id);let v=parseFloat(latin(el.value));if(!isFinite(v))v=parseFloat(el.defaultValue);
     const mn=parseFloat(el.min),mx=parseFloat(el.max);if(isFinite(mn))v=Math.max(mn,v);if(isFinite(mx))v=Math.min(mx,v);
     if(el.value!==String(v))el.value=String(v);o[KEYS[k]]=v});return o};
   window.__lifelineParams=()=>params();
@@ -125,6 +128,10 @@ if(typeof document!=='undefined')(function(){
     return '<div class="ladder">'+rungs.map(r=>`<div class="rung${r[0]===active?' on':''}"><div class="l">${r[0]}</div><div><div>${r[1]}</div><div class="d">${r[2]}</div></div></div>`).join('')+'</div>';
   }
 
+  // A dragged stop keeps its photo and notes, which belong to the original site; say so instead of "Curiosity site".
+  function siteNote(s){const o=toXY(s.lat,s.lon),km=Math.hypot(s.x-o.x,s.y-o.y)*CELL/1000;
+    if(s.x===o.x&&s.y===o.y)return s.real?'Curiosity site':'new site';
+    return 'moved '+(km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km')+' from the original site; the '+(s.orbital?'orbital view':'photo')+' and notes show the original site';}
   function renderRight(pos,used,c){
     const i=pos.cell,home=F.wHome.time[i]/D.walkSpeed,m=walkMargin(F,p,D,i,used),g=grade(m,p.gate);
     const turn=state.t+(m)*D.walkRate/RATE.work,nt=nextTarget(pos);
@@ -132,9 +139,9 @@ if(typeof document!=='undefined')(function(){
     if(state.mode==='walk'){
       $('rightCol').className='card walk';
       $('rightCol').innerHTML=`<h2>Wrist display</h2><div class="bigcmd ${c.g}-c">${c.cmd.toUpperCase()}</div><div class="tiles">
-        <div class="tile ${c.g}"><div class="k">Margin</div><div class="v">${fmtDur(c.m)}</div></div>
+        <div class="tile ${c.g}"><div class="k">${c.crisis?'Margin ('+c.name.toLowerCase()+')':'Margin (rover fails)'}</div><div class="v">${fmtDur(c.m)}</div></div>
         <div class="tile"><div class="k">Home on foot</div><div class="v">${fmtDur(home)}</div></div>
-        <div class="tile"><div class="k">Next: ${nt.name}</div><div class="v">${nt.km.toFixed(1)} km</div></div>
+        <div class="tile"><div class="k">Next: ${nt.name} (straight line)</div><div class="v">${nt.km.toFixed(1)} km</div></div>
         <div class="tile"><div class="k">Turn back by</div><div class="v">${fmtClock(turn)}</div></div>
         <div class="tile"><div class="k">Active plan</div><div class="v">${c.plan}</div></div></div>
         <p class="small">Same model as the plan view, cut to what a gloved hand can read at a glance.</p>`;
@@ -150,11 +157,11 @@ if(typeof document!=='undefined')(function(){
       <h2>Plan ladder</h2>${ladderHTML(c.plan)}
       <h2>Decision gates</h2><div class="gates">${gl.length?gl.map(gt=>`<div class="${gt.cls}">${gt.text}</div>`).join(''):'<div>First gate: leaving the first stop.</div>'}</div>
       <h2>Selected stop</h2><div class="stop"><div class="name">${sel.name}</div>
-      ${sel.img?`<figure class="pic${sel.orbital?' orb':''}"><div class="frame"><img src="${sel.img}" alt="${sel.photo}"${sel.focus?` style="object-position:${sel.focus}"`:''}>${sel.orbital?'<span class="ring"></span><span class="otag">ORBITAL</span>':''}</div><figcaption>${sel.cap} <span class="cr">Credit: ${sel.credit}</span></figcaption></figure>`:`<div class="photo">${sel.photo}</div>`}<div class="small">${(()=>{const ll=toLL(sel.x,sel.y);return ll.lat.toFixed(5)+", "+ll.lon.toFixed(5)+" · "+Math.round(T.z[sc])+" m · "+(sel.real?"Curiosity site":"new site")})()}</div>
+      ${sel.img?`<figure class="pic${sel.orbital?' orb':''}"><div class="frame"><img src="${sel.img}" alt="${sel.photo}"${sel.focus?` style="object-position:${sel.focus}"`:''}>${sel.orbital?'<span class="ring"></span><span class="otag">ORBITAL</span>':''}</div><figcaption>${sel.cap} <span class="cr">Credit: ${sel.credit}</span></figcaption></figure>`:`<div class="photo">${sel.photo}</div>`}<div class="small">${(()=>{const ll=toLL(sel.x,sel.y);return ll.lat.toFixed(5)+", "+ll.lon.toFixed(5)+" · "+Math.round(T.z[sc])+" m · "+siteNote(sel)})()}</div>
       <div>${sel.goal}</div>
-      <label for="val">Science value (1 to 5)<input id="val" type="number" min="1" max="5" step="1" value="${sel.value}"></label>
+      <label for="val">Science value (1 to 5)<input id="val" type="text" inputmode="numeric" autocomplete="off" min="1" max="5" value="${sel.value}"></label>
       <div class="small">Walk home from here: ${fmtDur(F.wHome.time[sc]/D.walkSpeed)}</div></div>`;
-    $('val').addEventListener('change',e=>{const v=Math.max(1,Math.min(5,Math.round(+e.target.value||1)));sel.value=v;replan()});
+    $('val').addEventListener('change',e=>{const v=Math.max(1,Math.min(5,Math.round(parseFloat(latin(e.target.value))||1)));sel.value=v;replan()});
   }
 
   function fixesFor(){
@@ -179,7 +186,7 @@ if(typeof document!=='undefined')(function(){
       const fx=fixesFor();
       html+=fx.length?`<table class="fixes"><thead><tr><th>Change that makes it GO</th><th style="text-align:right">Margin after</th></tr></thead><tbody>${fx.map(f=>`<tr><td>${f.t}</td><td class="n">${fmtDur(f.m)}</td></tr>`).join('')}</tbody></table>`:'<p class="small">No single change fixes this plan. Move the farthest stop closer.</p>';
       html+='<p class="small">Lowering the safety pad is never offered as a fix.</p>';
-    }else html+=`<p class="small">${g==='tight'?'Feasible, but close to a limit. Expect the gates to switch to plan B if anything runs late.':'All three limits clear: rover failure ('+fmtDur(sc.worst.m)+'), suit failure ('+fmtDur(sc.ride.m)+') and time in suit ('+fmtDur(E.timeSpare)+').'}</p>`;
+    }else html+=`<p class="small">${g==='tight'?'Feasible, but close to a limit. Expect the gates to switch to plan B if anything runs late.':'All three limits clear: rover failure ('+fmtDur(sc.worst.m)+', above the '+p.gate+' min gate), suit failure ('+fmtDur(sc.ride.m)+'; the ride home only has to fit the emergency oxygen, tight below 10 min) and time in suit ('+fmtDur(E.timeSpare)+').'}</p>`;
     $('whyCard').innerHTML=html;
   }
 

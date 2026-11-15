@@ -294,21 +294,21 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
   <section class="card model">
     <h2>Model and assumptions</h2>
     <div class="params">
-      <label for="pSpeed">Walking speed, flat (km/h)<input id="pSpeed" type="number" min="0.5" max="6" step="0.1" value="2"></label>
-      <label for="pO2">Suit oxygen at start (h, nominal work)<input id="pO2" type="number" min="2" max="12" step="0.5" value="8"></label>
-      <label for="pH2O">Cooling water at start (h, nominal work)<input id="pH2O" type="number" min="2" max="12" step="0.5" value="8"></label>
-      <label for="pEmerg">Emergency oxygen (min)<input id="pEmerg" type="number" min="10" max="180" step="1" value="57"></label>
-      <label for="pPad">Safety pad (%)<input id="pPad" type="number" min="0" max="60" step="5" value="20"></label>
-      <label for="pGate">Gate: minimum margin to continue (min)<input id="pGate" type="number" min="0" max="120" step="5" value="30"></label>
-      <label for="pLoad">Payload carried (kg)<input id="pLoad" type="number" min="0" max="40" step="1" value="10"></label>
-      <label for="pSlope">Slope limit (degrees)<input id="pSlope" type="number" min="10" max="30" step="1" value="25"></label>
-      <label for="pSand">Walking slowdown on sand (%)<input id="pSand" type="number" min="0" max="80" step="5" value="40"></label>
-      <label for="pRover">Rover speed (km/h)<input id="pRover" type="number" min="2" max="20" step="1" value="8"></label>
-      <label for="pRoverE">Rover emergency speed (km/h)<input id="pRoverE" type="number" min="2" max="20" step="1" value="10"></label>
-      <label for="pStation">Time at each stop (min)<input id="pStation" type="number" min="5" max="180" step="5" value="30"></label>
-      <label for="pMax">Max time in suit (h)<input id="pMax" type="number" min="2" max="10" step="0.25" value="6"></label>
-      <label for="pStart">EVA start (Mars local time, hours)<input id="pStart" type="number" min="0" max="23.5" step="0.25" value="8"></label>
-      <label for="pWarn">Storm warning time (min)<input id="pWarn" type="number" min="5" max="180" step="5" value="30"></label>
+      <label for="pSpeed">Walking speed, flat (km/h)<input id="pSpeed" type="text" inputmode="decimal" autocomplete="off" min="0.5" max="6" step="0.1" value="2"></label>
+      <label for="pO2">Suit oxygen at start (h, nominal work)<input id="pO2" type="text" inputmode="decimal" autocomplete="off" min="2" max="12" step="0.5" value="8"></label>
+      <label for="pH2O">Cooling water at start (h, nominal work)<input id="pH2O" type="text" inputmode="decimal" autocomplete="off" min="2" max="12" step="0.5" value="8"></label>
+      <label for="pEmerg">Emergency oxygen (min)<input id="pEmerg" type="text" inputmode="decimal" autocomplete="off" min="10" max="180" step="1" value="57"></label>
+      <label for="pPad">Safety pad (%)<input id="pPad" type="text" inputmode="decimal" autocomplete="off" min="0" max="60" step="5" value="20"></label>
+      <label for="pGate">Gate: minimum margin to continue (min)<input id="pGate" type="text" inputmode="decimal" autocomplete="off" min="0" max="120" step="5" value="30"></label>
+      <label for="pLoad">Payload carried (kg)<input id="pLoad" type="text" inputmode="decimal" autocomplete="off" min="0" max="40" step="1" value="10"></label>
+      <label for="pSlope">Slope limit (degrees)<input id="pSlope" type="text" inputmode="decimal" autocomplete="off" min="10" max="30" step="1" value="25"></label>
+      <label for="pSand">Walking slowdown on sand (%)<input id="pSand" type="text" inputmode="decimal" autocomplete="off" min="0" max="80" step="5" value="40"></label>
+      <label for="pRover">Rover speed (km/h)<input id="pRover" type="text" inputmode="decimal" autocomplete="off" min="2" max="20" step="1" value="8"></label>
+      <label for="pRoverE">Rover emergency speed (km/h)<input id="pRoverE" type="text" inputmode="decimal" autocomplete="off" min="2" max="20" step="1" value="10"></label>
+      <label for="pStation">Time at each stop (min)<input id="pStation" type="text" inputmode="decimal" autocomplete="off" min="5" max="180" step="5" value="30"></label>
+      <label for="pMax">Max time in suit (h)<input id="pMax" type="text" inputmode="decimal" autocomplete="off" min="2" max="10" step="0.25" value="6"></label>
+      <label for="pStart">EVA start (Mars local time, hours)<input id="pStart" type="text" inputmode="decimal" autocomplete="off" min="0" max="23.5" step="0.25" value="8"></label>
+      <label for="pWarn">Storm warning time (min)<input id="pWarn" type="text" inputmode="decimal" autocomplete="off" min="5" max="180" step="5" value="30"></label>
     </div>
     <div class="formula">walk_speed(cell)  = flat_speed × e^(−0.045·slope°) × sand_factor × load_factor     impassable above the slope limit   [slope term: team assumption]
 walk_home(cell)   = fastest walking time to the habitat over the terrain                     (Dijkstra, 8 directions)
@@ -324,7 +324,7 @@ GO                = all three hold along the whole plan;   gates: margin &lt; ga
       <li><b>Sourced, NASA suit planning [2]:</b> walking speed 2 km/h ("Traverses assume an ~2 km/hr walking pace over relatively level regolith", p. 40); suit oxygen and cooling water 8 h, and a nominal EVA of 6 h ("EVAs of up to 8 hours in duration (6±2 hours)", pp. 29 and 36). These are NASA's Artemis (Moon) planning values; no Mars suit figures exist yet.</li>
       <li><b>Sourced, radiation [3]:</b> 0.64 ± 0.12 mSv/day dose equivalent measured by Curiosity’s RAD at Gale Crater (shown for context; not used in the margins).</li>
       <li><b>Sourced, Curiosity REMS:</b> the daylight window: the walk must start after the latest sunrise (05:52) and be home before the earliest sunset (17:22) over the boxwork sols, local mean solar time. Radiation [3] gives the dose for the planned time outside.</li>
-      <li><b>Team choices, not sourced:</b> 30 min at each stop; EVA start 08:00 local time; the slope slowdown e^(−0.045·slope°); payload effect (−0.5% speed, +1% effort per kg); injured-crew factor (half speed, +30% effort); storm warning 30 min; the terrain shelter rule (flat ground under 10° at the foot of a slope over 18°, where the slope blocks part of the sky). NASA suited tests [4] support a slow walking speed on Mars: a 10 km walk in lunar gravity took 96 min (1.74 m/s), but in Mars gravity subjects neared maximum effort at 1.5 m/s. The sensitivity chart shows what each value costs.</li>
+      <li><b>Team choices, not sourced:</b> 30 min at each stop; EVA start 08:00 local time; the slope slowdown e^(−0.045·slope°); payload effect (−0.5% speed, +1% effort per kg); injured-crew factor (half speed, +30% effort); storm warning 30 min; the gate (at least 30 min of walk-back margin ahead to continue past a stop); the slope limit (25°; steeper cells are treated as impassable); the terrain shelter rule (flat ground under 10° at the foot of a slope over 18°, where the slope blocks part of the sky). NASA suited tests [4] support a slow walking speed on Mars: a 10 km walk in lunar gravity took 96 min (1.74 m/s), but in Mars gravity subjects neared maximum effort at 1.5 m/s. The sensitivity chart shows what each value costs.</li>
     </ul>
     <ol class="refs small">
       <li>P. Benjamin, <i>Apollo 15 EVA Capability and Constraints Envelopes</i>, Bellcomm memorandum B70 10028 (Case 320), 13 Oct 1970, NASA-CR-111182 (N79-73020). Not in NTRS; first published in NASA’s Apollo Lunar Surface Journal, whose link no longer works: <a href="data/refs/NASA-CR-111182_Apollo15_EVA_Capability_and_Constraints_Envelopes_1970.pdf">copy kept in this project</a> (<a href="https://web.archive.org/web/2019/https://www.hq.nasa.gov/alsj/19790073512_1979073512.pdf">Internet Archive copy of the NASA original</a>).</li>

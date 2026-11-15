@@ -22,7 +22,7 @@ Apollo values (activity rates, 20% pad, 57 min emergency oxygen, 10 km/h emergen
 No Mars suit exists yet, so no Mars figures exist. NASA's Artemis plan is the best official source. NASA suited tests show walking in Mars gravity is harder than on the Moon (subjects neared maximum effort at 1.5 m/s), so the slow 2 km/h is on the safe side. Every value can be changed in the tool.
 
 **What is still your own assumption?**
-30 min per stop, an 08:00 start, the slope slowdown, the payload and injury effects, the 30 min storm warning and the terrain shelter rule. They are labelled on the page. The sensitivity chart shows what they cost: 20% less suit capacity (−44 min) or 20% slower walking (−31 min) turns today's plan to NO-GO.
+30 min per stop, an 08:00 start, the slope slowdown, the payload and injury effects, the 30 min storm warning, the 30 min gate, the 25° slope limit and the terrain shelter rule. They are labelled on the page. The sensitivity chart shows what they cost: 20% less suit capacity (−44 min) or 20% slower walking (−31 min) turns today's plan to NO-GO.
 
 **How do you know the model is right?**
 Ten checks run in the page and in a test script. The model reproduces Apollo's 3.1 km radius (3.12 km). The terrain matches Curiosity's own altitudes at 885 points within 11.7 m (RMSE) across 823 m of relief. All 35,139 terrain cells equal the original ESA/Zenodo file within 0.1 m. Adding any crisis never makes the margin bigger (4,984 comparisons).
