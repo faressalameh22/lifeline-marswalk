@@ -85,6 +85,35 @@ Running 15 or 30 min late at stop A, the gates switch to plan B (skip B) and the
 
 We used Claude (Anthropic) to research past winners and NASA sources, to design the walk-back model with us, to write the code, to extract the terrain slice and rover waypoints, and to find and process the stop images and REMS readings from NASA's archives. The team chose the problem, the site and the mission, reviewed the model and its assumptions, and is responsible for the result. No AI-generated images are used; every image in the project is a real NASA image, credited where it is shown.
 
+## References
+
+**Documents** (details and page numbers in the data sections above):
+
+1. P. Benjamin, *Apollo 15 EVA Capability and Constraints Envelopes*, Bellcomm memorandum B70 10028, 13 Oct 1970, NASA-CR-111182. Copy in this project: https://faressalameh22.github.io/lifeline-marswalk/data/refs/NASA-CR-111182_Apollo15_EVA_Capability_and_Constraints_Envelopes_1970.pdf; Internet Archive copy of the NASA original: https://web.archive.org/web/2019/https://www.hq.nasa.gov/alsj/19790073512_1979073512.pdf
+2. NASA, *xEVA System Concept of Operations*, EVA-EXP-0042 Rev. B, Oct 2020: https://www.nasa.gov/wp-content/uploads/2017/02/eva-exp-0042_xeva_system_con_ops_rev_b_final_dtd_10192020_ref_doc.pdf
+3. D. M. Hassler et al., *Mars' Surface Radiation Environment Measured with the Mars Science Laboratory's Curiosity Rover*, Science 343 (6169), 2014: https://doi.org/10.1126/science.1244797; NTRS: https://ntrs.nasa.gov/citations/20180007641
+4. J. R. Norcross et al., NASA/TP-2009-214796 (2009): https://www.lpi.usra.edu/lunar/artemis/NorcrossEtAl_NASA-TP-2009-214796_EVA%20Walkback%20Test.pdf; and NASA/TP-2010-216115 (2010): https://www.lpi.usra.edu/lunar/artemis/NorcrossEtAl_NASA-TP-2010-216115_PlanetarySuitMetabolicCosts.pdf
+
+**Data sources:**
+
+- ESA Mars Express HRSC terrain, Persaud, Putri & Muller (2021), Zenodo, CC BY 4.0: https://doi.org/10.5281/zenodo.5808354
+- NASA/JPL MMGIS Curiosity waypoints: https://mars.nasa.gov/mmgis-maps/MSL/Layers/json/MSL_waypoints.json
+- NASA MSL weather feed (REMS, values from CAB/INTA): https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+- HiRISE ESP_087149_1750 browse image, University of Arizona: https://hirise.lpl.arizona.edu/PDS/EXTRAS/RDR/ESP/ORB_087100_087199/ESP_087149_1750/ESP_087149_1750_RED.browse.jpg
+- Curiosity raw images: Mastcam 4564ML1077420021801947E01 and Front Hazcam FLB_813578617EDR_F1191722FHAZ00302M, from NASA's public raw image archive.
+
+**Tools and open-source software:**
+
+- three.js 0.160.0 (MIT licence), loaded from the jsDelivr CDN, for the 3D view only.
+- Google Fonts: Barlow Condensed, IBM Plex Sans and IBM Plex Mono (SIL Open Font License).
+- Plain HTML, CSS and JavaScript: no framework, no build step, no backend.
+- Node.js for the test scripts and the raw-data check; headless Google Chrome, driven through the Chrome DevTools Protocol, for the browser tests, screenshots and the slide PDFs.
+- Python's built-in `http.server` to serve the site locally during testing.
+- GitHub for the code and GitHub Pages for hosting; GitHub Desktop to publish.
+- Claude (Anthropic) as described under Use of AI.
+
+Our own code is under the MIT licence (`LICENSE` in the repository).
+
 ## Links
 
 - Live demo: https://faressalameh22.github.io/lifeline-marswalk/

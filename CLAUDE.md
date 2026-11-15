@@ -22,7 +22,7 @@ The product, the data work, the slides and the submission text are finished and 
 - Repo: https://github.com/faressalameh22/lifeline-marswalk
 - Submission slides (sent to Space Apps, read without a presenter): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf
 - Presentation slides (for the local judges and discussion): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
-- Submission text to paste: `SUBMISSION.md`
+- Submission text to paste: `SUBMISSION.md` (includes a References section: documents, data sources, tools and open-source software)
 
 ## Rules that can disqualify us
 
