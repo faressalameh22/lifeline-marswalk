@@ -9,11 +9,14 @@ await b.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceSc
 await b.send('Page.navigate',{url:URL+'?'+Date.now()});await b.sleep(3000);
 await b.evalJS(`document.getElementById('mode3d').click()`);for(let i=0;i<40&&!await b.evalJS('!!window.__lifeline3d');i++)await b.sleep(250);
 await b.evalJS(`document.getElementById('v3d').scrollIntoView({block:'center'})`);await b.sleep(500);
+// wait until the 3D view renders smoothly (shader compile and texture upload finished) before touching it
+for(let k=0;k<40;k++){const ms=await b.evalJS(`new Promise(res=>{let n=0,t0=performance.now();const f=()=>{if(++n<6)requestAnimationFrame(f);else res((performance.now()-t0)/6)};requestAnimationFrame(f)})`);if(ms<60)break;await b.sleep(250)}
 const r=JSON.parse(await b.evalJS(`JSON.stringify(document.getElementById('v3d').getBoundingClientRect())`));console.log('3D panel on screen at y',Math.round(r.y),'scrollY',await b.evalJS('Math.round(scrollY)'));
-const shot=async n=>{const o=await b.send('Page.captureScreenshot',{format:'jpeg',quality:70,clip:{x:r.x,y:r.y+await b.evalJS('scrollY'),width:r.width,height:r.height,scale:1}});if(process.env.SHOTS)fs.writeFileSync(`${process.env.SHOTS}/pinch-${n}.jpg`,Buffer.from(o.data,'base64'))};
+const shot=async n=>{if(!process.env.SHOTS)return;const o=await b.send('Page.captureScreenshot',{format:'jpeg',quality:70,clip:{x:r.x,y:r.y+await b.evalJS('scrollY'),width:r.width,height:r.height,scale:1}});if(process.env.SHOTS)fs.writeFileSync(`${process.env.SHOTS}/pinch-${n}.jpg`,Buffer.from(o.data,'base64'))};
 const S=async()=>JSON.parse(await b.evalJS('JSON.stringify(__lifeline3d.stats())'));const s0=await S();const y0=await b.evalJS('Math.round(scrollY)');console.log('start  ',JSON.stringify(s0));await shot('0');
 // pinch out around a point in the lower third of the panel (near the stops), several times
 const cx=r.x+r.width*0.4,cy=r.y+r.height*0.7;
+console.log('under the fingers:',await b.evalJS('(()=>{const e=document.elementFromPoint('+cx+','+cy+');return e?(e.tagName+"#"+e.id+"."+e.className):"none"})()'),'| scrollY now',await b.evalJS('Math.round(scrollY)'));
 const pinch=async(from,to)=>{const steps=12;await b.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:cx-from,y:cy,id:1},{x:cx+from,y:cy,id:2}]});
   for(let k=1;k<=steps;k++){const d=from+(to-from)*k/steps;await b.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:cx-d,y:cy,id:1},{x:cx+d,y:cy,id:2}]});await b.sleep(16)}
   await b.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await b.sleep(400)};
@@ -24,7 +27,7 @@ console.log('more   ',await b.evalJS('JSON.stringify(__lifeline3d.stats())'));aw
 // one-finger rotate down toward the horizon
 await b.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:cx,y:r.y+r.height*0.8,id:1}]});for(let k=1;k<=15;k++){await b.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:cx,y:r.y+r.height*0.8-k*10,id:1}]});await b.sleep(16)}await b.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await b.sleep(500);
 const s3=await S();console.log('tilted ',JSON.stringify(s3));await shot('3');
-await b.evalJS(`document.getElementById('v3dReset').click()`);await b.sleep(400);console.log('reset  ',await b.evalJS('JSON.stringify(__lifeline3d.stats())'));
+await b.evalJS(`document.querySelector('[data-view=overview]').click()`);await b.sleep(400);console.log('reset  ',await b.evalJS('JSON.stringify(__lifeline3d.stats())'));
 const s4=await S();const y1=await b.evalJS('Math.round(scrollY)');
 const fails=[];if(!(s1.distance<s0.distance/3))fails.push('pinch did not zoom in');if(s1.distance<999)fails.push('zoomed closer than the 1 km limit');
 for(const [n,x] of [['pinched',s1],['tilted',s3]])if(x.clearance!==null&&x.clearance<39)fails.push(n+': camera below ground clearance');
