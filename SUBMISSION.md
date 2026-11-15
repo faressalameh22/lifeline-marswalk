@@ -116,6 +116,7 @@ Our own code is under the MIT licence (`LICENSE` in the repository).
 
 ## Links
 
+- Video (2 min): https://faressalameh22.github.io/lifeline-marswalk/video/LIFELINE-video.mp4
 - Live demo: https://faressalameh22.github.io/lifeline-marswalk/
 - Code and data: https://github.com/faressalameh22/lifeline-marswalk
 - Slides (PDF, 7 slides, readable without a presenter): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf

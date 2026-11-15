@@ -7,11 +7,20 @@ LIFELINE is a Marswalk planner for the boxwork ridges of Mount Sharp in Gale Cra
 Team **Six Seven**, NASA Space Apps Challenge 2026, Nablus local event.
 Challenge: *Interplanetary Survival Guide: Martian Map*.
 
-**Live demo:** https://faressalameh22.github.io/lifeline-marswalk/
-**Slides for the submission (PDF, readable on their own):** https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf
-**Live presentation:** a 1-minute intro (https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-intro.pdf) followed by the team's 2-minute video.
+## Start here
 
-**Detailed slides for the discussion (PDF):** https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
+| | What | Open |
+|---|---|---|
+| ▶️ | **Video (2 min 12 s)**: the problem and the tool, shown in action | [Watch in the browser](https://faressalameh22.github.io/lifeline-marswalk/video/LIFELINE-video.mp4) · [file in this repo](video/LIFELINE-video.mp4) |
+| 🌐 | **Live website**: the planner itself, no login, works on phone, tablet and laptop | https://faressalameh22.github.io/lifeline-marswalk/ |
+| 🎬 | **Intro slides (7 slides, 1 minute)**: shown live before the video | [PDF](https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-intro.pdf) |
+| 📄 | **Submission slides (7 slides)**: explain the whole project without a presenter | [PDF](https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf) |
+| 💬 | **Detailed slides**: backup for the judges' questions | [PDF](https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf) |
+| 📝 | **Submission text**: summary, data, references, use of AI | [SUBMISSION.md](SUBMISSION.md) |
+
+[![LIFELINE video: On Mars, no one is coming.](video/poster.jpg)](https://faressalameh22.github.io/lifeline-marswalk/video/LIFELINE-video.mp4)
+
+*Click the picture to play the video.*
 
 ## Try it in four steps
 
@@ -118,6 +127,8 @@ js/view3d.js          optional 3D view (three.js 0.160.0 from jsDelivr, loaded o
 data/terrain.js       HRSC elevation slice
 data/rover-track.js   Curiosity waypoints in the slice
 tests/run-tests.js    headless validation run
+video/                the team's 2-minute video (LIFELINE-video.mp4) and its poster frame
+slides/               intro, submission and detailed decks (PDF + HTML source), speaker notes, Q&A prep
 ```
 
 No build step and no server: open `index.html` or serve the folder.

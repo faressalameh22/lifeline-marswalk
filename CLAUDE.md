@@ -21,6 +21,7 @@ The product, the data work, the slides and the submission text are finished and 
 - Site: https://faressalameh22.github.io/lifeline-marswalk/ (GitHub Pages from `main`, root)
 - Repo: https://github.com/faressalameh22/lifeline-marswalk
 - Submission slides (sent to Space Apps, read without a presenter): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf
+- **Video (team-made, 2 min 12 s, 1080p, 29 MB):** `video/LIFELINE-video.mp4`, played from https://faressalameh22.github.io/lifeline-marswalk/video/LIFELINE-video.mp4. README opens with a "Start here" table linking the video, site and all decks.
 - **Live presentation plan (changed 15 Nov):** a 1-minute intro deck (7 slides, ~8 s each) then the team's own 2-minute video. Intro deck: https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-intro.pdf (script: `slides/intro-notes.md`; Arabic-only version `slides/intro-notes-ar.md`).
 - Detailed presentation slides (backup for the judges' questions): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
 - Submission text to paste: `SUBMISSION.md` (includes a References section: documents, data sources, tools and open-source software)
