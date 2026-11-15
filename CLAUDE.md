@@ -21,7 +21,8 @@ The product, the data work, the slides and the submission text are finished and 
 - Site: https://faressalameh22.github.io/lifeline-marswalk/ (GitHub Pages from `main`, root)
 - Repo: https://github.com/faressalameh22/lifeline-marswalk
 - Submission slides (sent to Space Apps, read without a presenter): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf
-- Presentation slides (for the local judges and discussion): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
+- **Live presentation plan (changed 15 Nov):** a 1-minute intro deck (7 slides, ~8 s each) then the team's own 2-minute video. Intro deck: https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-intro.pdf (script: `slides/intro-notes.md`).
+- Detailed presentation slides (backup for the judges' questions): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
 - Submission text to paste: `SUBMISSION.md` (includes a References section: documents, data sources, tools and open-source software)
 
 ## Rules that can disqualify us
@@ -77,7 +78,8 @@ docs/user-test/          5-minute user-test protocol (not run yet; no results ma
 docs/site-guide-ar.md    Arabic walkthrough of every part of the site
 docs/video-handoff.md    brief for making the project video (facts, assets, credits, script, rules)
 slides/                  submission.html -> LIFELINE-submission.pdf (7 self-explaining slides for the submission),
-                         index.html -> LIFELINE-slides.pdf (presentation deck), shots/, shots.mjs, render.mjs, cdp.mjs,
+                         intro.html -> LIFELINE-intro.pdf (1-minute intro before the video, notes in intro-notes.md),
+                         index.html -> LIFELINE-slides.pdf (detailed deck, backup for questions), shots/, shots.mjs, render.mjs, cdp.mjs,
                          speaker-notes(.md / -ar.md), qa-prep(.md / -ar.md)
 SUBMISSION.md            submission page text
 tests/                   see below
@@ -94,7 +96,7 @@ Node is installed at `~/.local/node/bin/node` (Homebrew could not build it). Goo
 - `node tests/verify-raw-data.mjs` (network): all terrain cells vs the Zenodo GeoTIFF, mission points vs NASA's live waypoint file.
 - Serve the repo: `python3 -m http.server 8790`, then `node tests/edge-browser.mjs` (every crisis combination, delays, extreme inputs, drags, 3D; fails on console errors, NaN or a wrong verdict) and `node tests/touch-3d.mjs` (pinch, tilt, reset on a phone screen).
 - Safari engine: Playwright WebKit was installed in a temp folder (`/private/tmp/claude-501/pw`, may be gone). The iPad itself was checked by the team and works.
-- Slides: `node slides/shots.mjs` recaptures screenshots, `node slides/render.mjs <png-dir>` writes `slides/LIFELINE-slides.pdf`; `node slides/render.mjs <png-dir> submission.html slides/LIFELINE-submission.pdf` writes the submission deck.
+- Slides: `node slides/shots.mjs` recaptures screenshots, `node slides/render.mjs <png-dir>` writes `slides/LIFELINE-slides.pdf`; `node slides/render.mjs <png-dir> submission.html slides/LIFELINE-submission.pdf` writes the submission deck; `node slides/render.mjs <png-dir> intro.html slides/LIFELINE-intro.pdf` writes the intro deck.
 
 If a change makes a check fail, fix the change, not the check.
 

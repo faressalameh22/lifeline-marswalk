@@ -9,7 +9,9 @@ Challenge: *Interplanetary Survival Guide: Martian Map*.
 
 **Live demo:** https://faressalameh22.github.io/lifeline-marswalk/
 **Slides for the submission (PDF, readable on their own):** https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf
-**Slides for the live presentation and discussion (PDF):** https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
+**Live presentation:** a 1-minute intro (https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-intro.pdf) followed by the team's 2-minute video.
+
+**Detailed slides for the discussion (PDF):** https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
 
 ## Try it in four steps
 

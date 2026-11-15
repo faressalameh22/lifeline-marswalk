@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LIFELINE intro</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+@page{size:1920px 1080px;margin:0}
+:root{--bg:#0F1419;--panel:#161D24;--line:#26313B;--text:#F2F0EB;--muted:#9AA3AD;--rust:#C1440E;--route:#3DD6F5;--safe:#2EAD6B;--tight:#F2B01E;--danger:#D9342B;--fence:#36E0C0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
+.s{width:1920px;height:1080px;position:relative;overflow:hidden;padding:60px 80px 0;page-break-after:always;break-after:page;display:flex;flex-direction:column}
+.s:last-child{page-break-after:auto;break-after:auto}
+h1{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:58px;line-height:1.08;max-width:1760px}
+h1 em{font-style:normal;color:var(--route)}
+.kick{font-family:'Barlow Condensed',sans-serif;font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin-bottom:12px;font-weight:600}
+.body{flex:1;display:grid;gap:40px;margin-top:36px;min-height:0;padding-bottom:84px}
+p,li{font-size:27px;line-height:1.42}
+.muted{color:var(--muted)} .small{font-size:21px;line-height:1.4} .xs{font-size:17px;line-height:1.35;color:var(--muted)}
+.mono{font-family:'IBM Plex Mono',monospace}
+.foot{position:absolute;left:80px;right:80px;bottom:26px;display:flex;justify-content:space-between;font-size:17px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.foot b{color:var(--text);font-weight:500;letter-spacing:.06em} .foot b span{color:var(--rust)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 28px}
+.card h3{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:34px;margin-bottom:8px}
+.tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:20px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:6px;border:1px solid currentColor;margin-bottom:12px}
+.crop{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#0b0f13}
+.crop img{position:absolute;max-width:none}
+.fill{width:100%;height:100%;object-fit:cover;display:block}
+.num{position:absolute;width:44px;height:44px;border-radius:50%;background:var(--route);color:#0F1419;font:600 27px 'Barlow Condensed',sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(15,20,25,.85)}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:23px}
+th{font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td.n,th.n{text-align:right} td.n{font-family:'IBM Plex Mono',monospace}
+.ok{color:var(--safe)} .bad{color:var(--danger)} .warn{color:var(--tight)} .cy{color:var(--route)}
+.big{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:60px;line-height:1;color:var(--route)}
+ul{list-style:none} ul li{padding-left:28px;position:relative;margin-bottom:10px}
+ul li:before{content:"";position:absolute;left:4px;top:.62em;width:10px;height:10px;border-radius:2px;background:var(--rust)}
+.brand{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:150px;letter-spacing:.03em;line-height:.9}
+.brand span{color:var(--rust)}
+figcaption{font-size:17px;color:var(--muted);line-height:1.35;margin-top:10px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:19px;background:var(--panel)}
+.chip b{color:var(--route);font-weight:500}
+
+.huge{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:110px;line-height:1.02;max-width:1760px}
+.huge em{font-style:normal;color:var(--route)}
+.sub{font-size:38px;line-height:1.35;color:var(--muted);margin-top:34px;max-width:1500px}
+.center{flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:90px}
+.bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.28}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,20,25,.96) 35%,rgba(15,20,25,.55))}
+.rel{position:relative}
+.stops{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;flex:1;min-height:0;margin-top:40px;padding-bottom:90px}
+.stops figure{display:flex;flex-direction:column;min-height:0}
+.stops .crop{flex:1;min-height:0}
+.stops h3{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:38px;margin-top:14px}
+.play{width:220px;height:220px;border-radius:50%;border:6px solid var(--route);display:flex;align-items:center;justify-content:center}
+.play:after{content:"";border-left:80px solid var(--route);border-top:50px solid transparent;border-bottom:50px solid transparent;margin-left:22px}
+</style>
+</head>
+<body>
+
+<!-- 1. Title -->
+<section class="s">
+  <img class="bgimg" src="shots/3d-crew.png" style="opacity:.45"><div class="shade"></div>
+  <div class="center rel">
+    <div class="brand" style="font-size:190px">LIFE<span>LINE</span></div>
+    <p class="huge" style="font-size:84px;margin-top:30px">Never go farther than you can <em>walk home.</em></p>
+    <p class="sub">A Marswalk planner that keeps the crew within reach of home.</p>
+    <p class="small" style="margin-top:60px"><b>Team Six Seven</b> · NASA Space Apps Challenge 2026 · Nablus</p>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>3D view of the live tool over real HRSC terrain; colours illustrative</span><span>1 / 7</span></div>
+</section>
+
+<!-- 2. Setting -->
+<section class="s">
+  <div class="kick">The mission</div>
+  <p class="huge" style="font-size:80px">Two astronauts walk to <em>three science stops</em> on Mars.</p>
+  <div class="stops">
+    <figure><div class="crop"><img class="fill" src="../data/img/stop-a-mastcam-sol4564.jpg" style="position:static;object-position:50% 55%"></div><h3>A · Altadena</h3><figcaption>Drilled by Curiosity. Mastcam, sol 4564. NASA/JPL-Caltech/MSSS</figcaption></figure>
+    <figure><div class="crop"><img class="fill" src="../data/img/stop-b-fhaz-sol4687.jpg" style="position:static;object-position:50% 38%"></div><h3>B · Monte Grande</h3><figcaption>Drilled by Curiosity. Front Hazcam, sol 4687. NASA/JPL-Caltech</figcaption></figure>
+    <figure><div class="crop"><img class="fill" src="../data/img/stop-c-hirise-ESP_087149_1750.jpg" style="position:static"></div><h3>C · Never visited</h3><figcaption>Orbital view, not a ground photo. HiRISE ESP_087149_1750. NASA/JPL-Caltech/Univ. of Arizona</figcaption></figure>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>Boxwork ridges of Mount Sharp, Gale Crater, where Curiosity is exploring now</span><span>2 / 7</span></div>
+</section>
+
+<!-- 3. Problem -->
+<section class="s">
+  <img class="bgimg" src="shots/3d-overview.png"><div class="shade"></div>
+  <div class="center rel">
+    <div class="kick">The problem</div>
+    <p class="huge">If the rover or a suit fails, <em>no one can come</em> to rescue them.</p>
+    <p class="sub">The crew must always be able to get home on its own.</p>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>The only safe place is the habitat</span><span>3 / 7</span></div>
+</section>
+
+<!-- 4. Question -->
+<section class="s">
+  <div class="center">
+    <div class="kick">The question</div>
+    <p class="huge">Can the crew still get home?</p>
+    <p class="huge" style="margin-top:20px"><em>At every minute. From every step.</em></p>
+    <p class="sub">A map shows where to go. It does not say whether you can get back.</p>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>The planner needs a GO or NO-GO answer, and what to do the moment something fails</span><span>4 / 7</span></div>
+</section>
+
+<!-- 5. Apollo -->
+<section class="s">
+  <div class="center">
+    <div class="kick">The rule we borrowed</div>
+    <p class="huge">Apollo, 1970: never drive farther than you can <em>walk back.</em></p>
+    <p class="sub">Planners drew it as a fixed 3.1 km circle, before the mission.</p>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>Apollo 15 EVA planning memo, NASA-CR-111182 (1970), pp. 1–2</span><span>5 / 7</span></div>
+</section>
+
+<!-- 6. LIFELINE -->
+<section class="s">
+  <div class="kick">Our answer</div>
+  <p class="huge" style="font-size:84px">LIFELINE makes that rule <em>live</em> on real Martian terrain.</p>
+  <div style="display:grid;grid-template-columns:1fr 560px;gap:48px;flex:1;min-height:0;margin-top:36px;padding-bottom:90px">
+    <div class="crop"><img src="shots/plan-go.png" style="width:1240px;left:-4px;top:-268px"></div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:26px">
+      <p style="font-size:40px;line-height:1.25">Every <b class="cy">minute</b> of the plan</p>
+      <p style="font-size:40px;line-height:1.25">Every <b class="cy">30 m</b> of ground</p>
+      <p style="font-size:40px;line-height:1.25">Rover, suit, storm, injury</p>
+      <p style="font-size:40px;line-height:1.25"><b class="ok">GO</b> or <b class="bad">NO-GO</b>, and why</p>
+    </div>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>Screenshot of the live tool, default plan</span><span>6 / 7</span></div>
+</section>
+
+<!-- 7. Video -->
+<section class="s">
+  <div class="center" style="align-items:center;text-align:center">
+    <div class="play"></div>
+    <p class="huge" style="margin-top:56px">Watch it in action.</p>
+    <p class="sub" style="margin-left:auto;margin-right:auto">2-minute video</p>
+    <p class="small mono" style="margin-top:60px;color:var(--route)">faressalameh22.github.io/lifeline-marswalk</p>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>Team Six Seven · Nablus · Not endorsed by NASA</span><span>7 / 7</span></div>
+</section>
+
+</body>
+</html>
