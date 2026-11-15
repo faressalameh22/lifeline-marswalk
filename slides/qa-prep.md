@@ -30,6 +30,9 @@ Ten checks run in the page and in a test script. The model reproduces Apollo's 3
 **What resolution is the terrain?**
 30 m cells from ESA's HRSC on Mars Express. That is why the 3D view stops zooming at about 1 km; closer would only show blur.
 
+**How do you prove the route is correct and safe?**
+Correct: the terrain is the real ESA HRSC elevation, all 35,139 cells checked against the original file and within 11.7 m of Curiosity's own altitudes. The path finder is tested: exact on flat ground, never more than 8.2% off and always on the long (safe) side, and no cell gets a walk home shorter than a straight line. The steepest slope on the whole route is 16° (the limit is 25°); only 0.18 km of 10.2 km is above 15°. Because slopes slow walking, the walk home from stop A is 196 min, not the 134 min a straight line would give. 41% of the route lies within 100 m of ground Curiosity actually drove, and the habitat, A and B are points the rover stood on. Safe: a rover failure and a suit failure were simulated at each of the 178 minutes (356 in total), all with a way home (worst margins 32 and 15 min), with Apollo's 20% pad, NASA's slow 2 km/h walking pace and gates at every stop. Limit: 30 m cells cannot see boulders or soft sand; before a real walk the route would be checked with HiRISE terrain (about 1 m) and a THEMIS sand layer.
+
 ## Failures
 
 **What happens if two things fail at once?**
