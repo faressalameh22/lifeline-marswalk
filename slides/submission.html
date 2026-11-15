@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LIFELINE submission slides</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+@page{size:1920px 1080px;margin:0}
+:root{--bg:#0F1419;--panel:#161D24;--line:#26313B;--text:#F2F0EB;--muted:#9AA3AD;--rust:#C1440E;--route:#3DD6F5;--safe:#2EAD6B;--tight:#F2B01E;--danger:#D9342B;--fence:#36E0C0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
+.s{width:1920px;height:1080px;position:relative;overflow:hidden;padding:60px 80px 0;page-break-after:always;break-after:page;display:flex;flex-direction:column}
+.s:last-child{page-break-after:auto;break-after:auto}
+h1{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:58px;line-height:1.08;max-width:1760px}
+h1 em{font-style:normal;color:var(--route)}
+.kick{font-family:'Barlow Condensed',sans-serif;font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin-bottom:12px;font-weight:600}
+.body{flex:1;display:grid;gap:40px;margin-top:36px;min-height:0;padding-bottom:84px}
+p,li{font-size:27px;line-height:1.42}
+.muted{color:var(--muted)} .small{font-size:21px;line-height:1.4} .xs{font-size:17px;line-height:1.35;color:var(--muted)}
+.mono{font-family:'IBM Plex Mono',monospace}
+.foot{position:absolute;left:80px;right:80px;bottom:26px;display:flex;justify-content:space-between;font-size:17px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.foot b{color:var(--text);font-weight:500;letter-spacing:.06em} .foot b span{color:var(--rust)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 28px}
+.card h3{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:34px;margin-bottom:8px}
+.tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:20px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:6px;border:1px solid currentColor;margin-bottom:12px}
+.crop{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#0b0f13}
+.crop img{position:absolute;max-width:none}
+.fill{width:100%;height:100%;object-fit:cover;display:block}
+.num{position:absolute;width:44px;height:44px;border-radius:50%;background:var(--route);color:#0F1419;font:600 27px 'Barlow Condensed',sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(15,20,25,.85)}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:23px}
+th{font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td.n,th.n{text-align:right} td.n{font-family:'IBM Plex Mono',monospace}
+.ok{color:var(--safe)} .bad{color:var(--danger)} .warn{color:var(--tight)} .cy{color:var(--route)}
+.big{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:60px;line-height:1;color:var(--route)}
+ul{list-style:none} ul li{padding-left:28px;position:relative;margin-bottom:10px}
+ul li:before{content:"";position:absolute;left:4px;top:.62em;width:10px;height:10px;border-radius:2px;background:var(--rust)}
+.brand{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:150px;letter-spacing:.03em;line-height:.9}
+.brand span{color:var(--rust)}
+figcaption{font-size:17px;color:var(--muted);line-height:1.35;margin-top:10px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:19px;background:var(--panel)}
+.chip b{color:var(--route);font-weight:500}
+.s{padding-top:52px}
+h1{font-size:50px}
+.body{margin-top:28px;gap:32px}
+.card{padding:20px 24px}
+.card h3{font-size:29px;margin-bottom:6px}
+.small{font-size:20px;line-height:1.38}
+.xs{font-size:16px}
+.step{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:start}
+.step .num{position:static}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.flow .card{position:relative}
+.flow .card:not(:last-child):after{content:"→";position:absolute;right:-17px;top:42%;color:var(--rust);font-size:26px;font-weight:600}
+td,th{padding:7px 10px} td{font-size:20px}
+.small li{font-size:20px;line-height:1.38;margin-bottom:6px}
+.roomy .small,.roomy .small li{font-size:23px;line-height:1.42}
+.roomy .card{padding:24px 28px}
+</style>
+</head>
+<body>
+
+<!-- 1. Title and summary -->
+<section class="s">
+  <div style="display:grid;grid-template-columns:1fr 560px;gap:60px;flex:1;min-height:0;padding-bottom:84px">
+    <div style="display:flex;flex-direction:column">
+      <div class="brand" style="font-size:130px">LIFE<span>LINE</span></div>
+      <p class="muted" style="font-size:28px;margin-top:12px">Never go farther than you can walk home.</p>
+      <h1 style="margin-top:30px">A Marswalk planner that checks, at every minute and on real terrain, <em>that the crew can still get home if the rover or a suit fails.</em></h1>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px">
+        <div class="card"><h3>What it is</h3><p class="small">A free web tool (no login, no install) that plans a crewed walk (EVA) to three science stops in the boxwork ridges of Mount Sharp, Gale Crater, where Curiosity is driving now.</p></div>
+        <div class="card"><h3>Who it is for</h3><p class="small">The person who plans the walk. It answers one decision: GO or NO-GO, and what the crew must do the moment something fails.</p></div>
+        <div class="card"><h3>How it works</h3><p class="small">Apollo's walk-back rule, computed live from 30 m ESA terrain, NASA Apollo and Artemis planning values and Curiosity weather data.</p></div>
+        <div class="card"><h3>Result</h3><p class="small">Today's plan: <b class="ok">GO FOR EVA</b>, 2 h 57. 356 single failures simulated, one at every minute: every one leaves a way home.</p></div>
+      </div>
+      <div style="margin-top:auto">
+        <p class="small"><b>Team Six Seven</b> · NASA Space Apps Challenge 2026 · Nablus · Challenge: Interplanetary Survival Guide: Martian Map</p>
+        <p class="small mono" style="margin-top:8px;color:var(--route)">Live tool: faressalameh22.github.io/lifeline-marswalk</p>
+      </div>
+    </div>
+    <figure style="display:flex;flex-direction:column;min-height:0">
+      <div class="crop" style="flex:1;min-height:0;background:linear-gradient(#1a110c,#4a2c1d)"><img class="fill" src="shots/3d-crew.png" style="position:static"></div>
+      <figcaption>Screenshot of the tool, 3D crew view: the planned route climbing back to the habitat (H) over real HRSC terrain. The white ball is the crew.</figcaption>
+    </figure>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>This deck explains the whole project without a presenter</span><span>1 / 7</span></div>
+</section>
+
+<!-- 2. Problem and mission -->
+<section class="s">
+  <div class="kick">The problem and the mission</div>
+  <h1>A map shows where to go, but not whether the crew <em>can still get back</em>. On Mars no rescue can come.</h1>
+  <div class="body" style="grid-template-columns:560px 1fr">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card"><h3>Why it matters</h3><p class="small">On the Moon, Apollo crews were never more than a short walk from the lander, and planners drew a fixed safe radius before each EVA. On Mars, a crew far from the habitat with a broken rover or a failing suit has only what is left in the suit. The planner must know, minute by minute, whether that is enough.</p></div>
+      <div class="card"><h3>The decision</h3><p class="small">Before the walk: GO or NO-GO, and which stops fit. During it: if the rover fails, a suit fails, someone is hurt, a solar storm is announced or the crew runs late, what to do <i>now</i>.</p></div>
+      <div class="card"><h3>The mission (default plan)</h3><p class="small">Out at 08:00 from a habitat on Curiosity's sol 3038 position. Habitat → A → B → C → home by rover, 30 min of work at each stop. 10.2 km, 492 m of climb.</p></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-content:start">
+      <figure><div class="crop" style="height:470px"><img src="../data/img/stop-a-mastcam-sol4564.jpg" class="fill" style="position:static;object-position:50% 55%"></div>
+        <figcaption><b style="color:var(--text)">A · Altadena.</b> Where Curiosity drilled on sol 4564. Mastcam. NASA/JPL-Caltech/MSSS</figcaption></figure>
+      <figure><div class="crop" style="height:470px"><img src="../data/img/stop-b-fhaz-sol4687.jpg" class="fill" style="position:static;object-position:50% 38%"></div>
+        <figcaption><b style="color:var(--text)">B · Monte Grande.</b> The "Valle de la Luna" block, drilled Oct 2025. Front Hazcam, sol 4687. NASA/JPL-Caltech</figcaption></figure>
+      <figure><div class="crop" style="height:470px"><img src="../data/img/stop-c-hirise-ESP_087149_1750.jpg" class="fill" style="position:static"><span style="position:absolute;left:50%;top:50%;width:70px;height:70px;transform:translate(-50%,-50%);border:3px solid var(--route);border-radius:50%"></span><span class="tag" style="position:absolute;left:12px;top:12px;color:var(--route);background:rgba(15,20,25,.85)">Orbital</span></div>
+        <figcaption><b style="color:var(--text)">C · new hollow.</b> Inside the boxwork; no rover has reached it (its path passes about 60 m away), so no ground image exists. HiRISE. NASA/JPL-Caltech/Univ. of Arizona</figcaption></figure>
+      <p class="small muted" style="grid-column:1/4">Science value rises from A to C: A and B extend Curiosity's drill record; C is new ground that only a human visit can sample. That is why a crew walks here, and why their safety must be checked at every step.</p>
+    </div>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>Stop positions from NASA's Curiosity waypoint file; all images are real NASA images</span><span>2 / 7</span></div>
+</section>
+
+<!-- 3. How it works -->
+<section class="s roomy">
+  <div class="kick">How it works</div>
+  <h1>Three limits, checked <em>at every minute</em> of the plan, from every 30 m cell of real terrain.</h1>
+  <div class="body" style="grid-template-rows:auto auto auto;align-content:start;gap:22px">
+    <div class="flow">
+      <div class="card"><span class="tag cy">1 Terrain</span><p class="small">ESA HRSC elevation of Gale Crater, 30 m cells (159 × 221).</p></div>
+      <div class="card"><span class="tag cy">2 Walk home</span><p class="small">Shortest walking time home from every cell (8-direction search), slower on slopes, no walking above 25°.</p></div>
+      <div class="card"><span class="tag cy">3 Reserve</span><p class="small">Suit oxygen and water run down minute by minute at Apollo's riding, working and walking rates.</p></div>
+      <div class="card"><span class="tag cy">4 Margins</span><p class="small">At each minute: reserve left minus padded walk home; emergency oxygen minus padded ride home; time left.</p></div>
+      <div class="card"><span class="tag cy">5 Decision</span><p class="small">GO / NO-GO, the tightest moment, the reason, and gates that change the plan.</p></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
+      <div class="card" style="border-top:5px solid var(--safe)"><span class="tag ok">If the rover fails</span><h3>Walk-back limit</h3><p class="small">The suit reserve left must cover the walk home over the real terrain, plus a 20% safety pad.</p></div>
+      <div class="card" style="border-top:5px solid var(--tight)"><span class="tag warn">If a suit fails</span><h3>Ride-back limit</h3><p class="small">57 min of emergency oxygen must cover the ride home at 10 km/h, plus the 20% pad.</p></div>
+      <div class="card" style="border-top:5px solid var(--route)"><span class="tag cy">Always</span><h3>Time and daylight</h3><p class="small">Home within a 6 h EVA, starting after sunrise and ending before sunset (05:52 to 17:22 local time).</p></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;min-height:0">
+      <div class="card"><h3>Gates and verdict</h3><p class="small">Leaving each stop, the tool checks the margin ahead. Under 30 min, or past the time limit: plan B drops the lowest-science stop; if that is not enough, plan C sends the crew home. The 20% pad is never lowered. <b class="ok">GO</b>: all limits clear. <b class="warn">GO, MARGIN TIGHT</b>: all clear but one is near its edge. <b class="bad">NO-GO</b>: a limit is broken, with the fixes that would clear it.</p></div>
+      <div class="card"><h3>Where the numbers come from</h3><p class="small">Activity rates, 20% pad, rover 8 / 10 km/h, 57 min emergency oxygen: Apollo 15 planning memo, NASA-CR-111182 (1970), p. 1. Walking 2 km/h, 8 h suit, 6 h EVA: NASA xEVA (Artemis) ConOps, EVA-EXP-0042 Rev B (2020), pp. 29, 36, 40. Daylight: Curiosity REMS. Team choices (30 min per stop, 08:00 start, slope slowdown) are labelled in the tool.</p></div>
+    </div>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>All 15 inputs can be changed in the tool's "Model and assumptions" panel</span><span>3 / 7</span></div>
+</section>
+
+<!-- 4. The tool -->
+<section class="s">
+  <div class="kick">Using the tool</div>
+  <h1>One screen gives the verdict, the safe ground, <em>the order to follow in a crisis</em>, and why.</h1>
+  <div class="body" style="grid-template-columns:760px 1fr;gap:40px">
+    <div class="crop" style="height:772px;align-self:start">
+      <img src="shots/plan-go.png" style="width:760px;left:0;top:0">
+      <div class="num" style="left:700px;top:46px">1</div>
+      <div class="num" style="left:330px;top:300px">2</div>
+      <div class="num" style="left:700px;top:120px">3</div>
+      <div class="num" style="left:538px;top:322px">4</div>
+      <div class="num" style="left:168px;top:722px">5</div>
+      <div class="num" style="left:96px;top:370px">6</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:13px;min-height:0">
+      <div class="step"><div class="num">1</div><p class="small"><b>Verdict.</b> GO FOR EVA, GO with a tight margin, or NO-GO. A "Why" card gives the tightest moment, e.g. <i>"If the rover fails while working at stop C (T+2:14), the walk home takes 3 h 32, padded to 4 h 15; the suits have 4 h 47 of walking left."</i></p></div>
+      <div class="step"><div class="num">2</div><p class="small"><b>Margin map.</b> Each 30 m cell: <span class="ok">green</span> safe, <span class="warn">yellow</span> tight, <span class="bad">red</span> no return. The dashed line is the ride-back limit. Triangles are terrain shelters; dots are Curiosity's real track. Drag stops to test a new plan.</p></div>
+      <div class="step"><div class="num">3</div><p class="small"><b>Right now.</b> Drag the time slider: margins if the rover or a suit fails at that minute, and the walk home from there.</p></div>
+      <div class="step"><div class="num">4</div><p class="small"><b>Plan ladder and gates.</b> A full mission, B shortened, C return early, D emergency. The active plan is highlighted.</p></div>
+      <div class="step"><div class="num">5</div><p class="small"><b>Crises.</b> Rover fails, suit failure, crew injured, solar storm, running late; combinable. Example: rover fails at T+1:30 → <i>walk home now, 1 h 02 spare.</i> A storm adds "reach a terrain shelter first", never instead of getting home.</p></div>
+      <div class="step"><div class="num">6</div><p class="small"><b>Environment and more.</b> Radiation, daylight and weather; a validation panel; all inputs with sources. A Walk view shows the same model large enough to read with gloves.</p></div>
+    </div>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>Screenshot of the live tool with the default plan at T+0:40</span><span>4 / 7</span></div>
+</section>
+
+<!-- 5. 3D and environment -->
+<section class="s">
+  <div class="kick">3D view and environment</div>
+  <h1>The 3D view shows the climbs and <em>the edge of safe ground</em>; the environment panel adds radiation and daylight.</h1>
+  <div class="body" style="grid-template-columns:440px 440px 1fr;gap:30px">
+    <figure style="display:flex;flex-direction:column;min-height:0"><div class="crop" style="flex:1;min-height:0;background:linear-gradient(#1a110c,#4a2c1d)"><img class="fill" src="shots/3d-overview.png" style="position:static"></div>
+      <figcaption>Overview: the whole route over the real terrain, from the habitat (H) to stops A, B and C (height exaggerated).</figcaption></figure>
+    <figure style="display:flex;flex-direction:column;min-height:0"><div class="crop" style="flex:1;min-height:0;background:linear-gradient(#1a110c,#4a2c1d)"><img class="fill" src="shots/3d-top-t2.png" style="position:static"></div>
+      <figcaption>T+2:30: the <b style="color:var(--fence)">safety fence</b> appears. Beyond it the crew could not walk home if the rover failed now. It closes in as the suits run down.</figcaption></figure>
+    <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+      <div class="crop" style="height:170px;flex:none"><img src="shots/profile.png" style="width:100%;left:0;top:0"></div>
+      <p class="small">Elevation along the plan: 10.2 km, 492 m of climb. Steep slopes are tinted (amber over 15°, red above the 25° limit); the steepest point on the route is 16°. Height can be exaggerated ×1 to ×6. Shape: real HRSC data; colours and fine texture are illustrative and labelled as such.</p>
+      <table style="margin-top:4px">
+        <tr><th>Environment</th><th class="n">Value</th><th>Source</th></tr>
+        <tr><td>Radiation dose rate</td><td class="n">0.64 ± 0.12 mSv/day</td><td class="small">Curiosity RAD, Hassler et al. 2014</td></tr>
+        <tr><td>Dose on this walk</td><td class="n">0.08 mSv</td><td class="small">same rate × 2 h 57</td></tr>
+        <tr><td>Daylight window</td><td class="n">05:52 to 17:22</td><td class="small">Curiosity REMS</td></tr>
+        <tr><td>Air temperature</td><td class="n">−82 to −5 °C</td><td class="small">REMS, 123 sols</td></tr>
+        <tr><td>Air pressure</td><td class="n">679 to 782 Pa</td><td class="small">REMS, 123 sols</td></tr>
+      </table>
+      <p class="xs">REMS values cover sols 4564 to 4687 (Jun to Oct 2025), the stretch between stops A and B. Radiation is shown for context and does not change the margins.</p>
+    </div>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>The 3D view follows the 2D map live (three.js); stops are moved on the 2D map</span><span>5 / 7</span></div>
+</section>
+
+<!-- 6. Results and validation -->
+<section class="s">
+  <div class="kick">Results and validation</div>
+  <h1>Every single failure leaves a way home at every minute, <em>and the model reproduces Apollo and Curiosity.</em></h1>
+  <div class="body" style="grid-template-columns:1fr 1fr;gap:40px">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <p class="small muted">Each crisis started at every one of the 178 minutes of the plan:</p>
+      <table>
+        <tr><th>Crisis</th><th class="n">Worst margin</th><th class="n">Unsafe minutes</th></tr>
+        <tr><td>Rover fails</td><td class="n ok">32 min</td><td class="n ok">0</td></tr>
+        <tr><td>Suit fails</td><td class="n ok">15 min</td><td class="n ok">0</td></tr>
+        <tr><td>Solar storm</td><td class="n ok">23 min</td><td class="n ok">0</td></tr>
+        <tr><td>Crew member injured (rover works)</td><td class="n ok">&gt; 8 h</td><td class="n ok">0</td></tr>
+        <tr><td>Rover fails + suit fails</td><td class="n bad">−203 min</td><td class="n bad">158</td></tr>
+      </table>
+      <p class="xs">Two failures at once are not covered, as in Apollo planning, which covered one failure at a time. The tool shows exactly where; covering them needs a second rover or supply caches.</p>
+      <p class="small muted" style="margin-top:6px">Running late at stop A, the gates decide:</p>
+      <table>
+        <tr><th>Late</th><th>Gate decision</th><th class="n">Home by</th><th class="n">Worst margin</th></tr>
+        <tr><td>on time</td><td>Plan A, all stops</td><td class="n">T+2:57</td><td class="n ok">32 min</td></tr>
+        <tr><td>15 min</td><td>Plan B, skip B</td><td class="n">T+2:40</td><td class="n ok">45 min</td></tr>
+        <tr><td>45 min</td><td>Plan C, go home</td><td class="n">T+2:34</td><td class="n ok">66 min</td></tr>
+      </table>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div class="card"><div class="big" style="font-size:52px">3.12 km</div><p class="small" style="margin-top:6px">walking radius our model gives with Apollo's inputs; Apollo planners: 3.1 km</p></div>
+        <div class="card"><div class="big" style="font-size:52px">11.7 m</div><p class="small" style="margin-top:6px">terrain vs Curiosity's own altitudes (RMSE, 885 points, 823 m of relief)</p></div>
+        <div class="card"><div class="big" style="font-size:52px">35,139</div><p class="small" style="margin-top:6px">terrain cells checked against the original ESA/Zenodo file, all within 0.1 m</p></div>
+        <div class="card"><div class="big ok" style="font-size:52px">10 / 10</div><p class="small" style="margin-top:6px">checks pass in the page and the test script; adding a crisis never raises a margin</p></div>
+      </div>
+      <div class="card"><h3>Is the route sensible?</h3><p class="small">Steepest slope 16° (limit 25°); only 0.18 of 10.2 km is above 15°. Slopes are counted: the walk home from A takes 196 min, not the 134 min a straight line would give. 41% of the route is within 100 m of ground Curiosity actually drove.</p></div>
+      <div class="card"><h3>How sensitive is it?</h3><p class="small">20% less suit capacity cuts the margin to −44 min; 20% slower walking to −31 min. Either turns today's plan to NO-GO, and the tool's sensitivity chart shows it.</p></div>
+    </div>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>Every number recomputed by the test scripts in the public repo</span><span>6 / 7</span></div>
+</section>
+
+<!-- 7. Data, limits, impact -->
+<section class="s roomy">
+  <div class="kick">Data, limits and impact</div>
+  <h1>Built on data from <em>three spacecraft and two agencies</em>, honest about its limits, ready for the Moon and Mars.</h1>
+  <div class="body" style="grid-template-columns:1fr 1fr;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card"><h3>Data used</h3><ul class="small">
+        <li>Terrain: HRSC 30 m DTM of Gale Crater, ESA Mars Express (Persaud et al. 2021, Zenodo, CC BY 4.0)</li>
+        <li>Curiosity: 885 waypoints (habitat, A, B, terrain check), Mastcam and Hazcam images, REMS weather and daylight, RAD radiation</li>
+        <li>MRO HiRISE image of stop C (NASA/JPL-Caltech/University of Arizona)</li>
+        <li>Apollo 15 planning memo (1970) and NASA's Artemis suit plan (2020)</li></ul></div>
+      <div class="card" style="border-color:rgba(242,176,30,.5)"><h3 class="warn">Limits</h3><p class="small">30 m cells cannot see boulders or soft sand; a real walk would recheck the route with HiRISE terrain (about 1 m) and a THEMIS sand layer. No Mars suit exists yet, so suit values come from NASA's Artemis (Moon) plan. 30 min per stop, the 08:00 start, the slope slowdown, the injury factor, the storm warning and the shelter rule are team choices, labelled in the tool. Not yet tested with real EVA planners.</p></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card"><h3>Impact and next steps</h3><ul class="small">
+        <li>Works on the Moon or any site with an elevation model; defaults already follow NASA's Artemis plan</li>
+        <li>Next: feed it live suit, rover and space-weather data so the crew gets the order the moment a failure is detected</li>
+        <li>Second rover or supply caches to cover double failures; a user study with EVA planners</li></ul></div>
+      <div class="card"><h3>Try it and check it</h3><p class="small mono cy">faressalameh22.github.io/lifeline-marswalk</p><p class="small mono muted">github.com/faressalameh22/lifeline-marswalk</p><p class="xs" style="margin-top:8px">Runs in any browser on phone, tablet or computer. Code, data, tests and source documents are public.</p></div>
+      <p class="xs">Use of AI: we used Claude (Anthropic) to research sources, build the model with us, write the code and process the data. The team chose the problem, the site and the mission, reviewed the model and is responsible for the result. No AI-generated images: all images are real NASA images or screenshots of our tool.</p>
+    </div>
+  </div>
+  <div class="foot"><b>LIFE<span>LINE</span></b><span>Team Six Seven · Nablus · Not endorsed by NASA</span><span>7 / 7</span></div>
+</section>
+
+</body>
+</html>

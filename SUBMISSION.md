@@ -89,6 +89,6 @@ We used Claude (Anthropic) to research past winners and NASA sources, to design 
 
 - Live demo: https://faressalameh22.github.io/lifeline-marswalk/
 - Code and data: https://github.com/faressalameh22/lifeline-marswalk
-- Slides (PDF, 7 slides): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
+- Slides (PDF, 7 slides, readable without a presenter): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf
 
 This project is not endorsed by NASA.

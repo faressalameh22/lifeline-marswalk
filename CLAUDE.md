@@ -20,7 +20,8 @@ The product, the data work, the slides and the submission text are finished and 
 
 - Site: https://faressalameh22.github.io/lifeline-marswalk/ (GitHub Pages from `main`, root)
 - Repo: https://github.com/faressalameh22/lifeline-marswalk
-- Slides: https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
+- Submission slides (sent to Space Apps, read without a presenter): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-submission.pdf
+- Presentation slides (for the local judges and discussion): https://faressalameh22.github.io/lifeline-marswalk/slides/LIFELINE-slides.pdf
 - Submission text to paste: `SUBMISSION.md`
 
 ## Rules that can disqualify us
@@ -74,7 +75,8 @@ data/refs/               copy of the Apollo 15 memo NASA-CR-111182 (the NASA URL
 docs/verification/       raw-data verification report and HiRISE overlays for stop C
 docs/user-test/          5-minute user-test protocol (not run yet; no results may be claimed)
 docs/site-guide-ar.md    Arabic walkthrough of every part of the site
-slides/                  index.html (source), LIFELINE-slides.pdf, shots/, shots.mjs, render.mjs, cdp.mjs,
+slides/                  submission.html -> LIFELINE-submission.pdf (7 self-explaining slides for the submission),
+                         index.html -> LIFELINE-slides.pdf (presentation deck), shots/, shots.mjs, render.mjs, cdp.mjs,
                          speaker-notes(.md / -ar.md), qa-prep(.md / -ar.md)
 SUBMISSION.md            submission page text
 tests/                   see below
@@ -91,7 +93,7 @@ Node is installed at `~/.local/node/bin/node` (Homebrew could not build it). Goo
 - `node tests/verify-raw-data.mjs` (network): all terrain cells vs the Zenodo GeoTIFF, mission points vs NASA's live waypoint file.
 - Serve the repo: `python3 -m http.server 8790`, then `node tests/edge-browser.mjs` (every crisis combination, delays, extreme inputs, drags, 3D; fails on console errors, NaN or a wrong verdict) and `node tests/touch-3d.mjs` (pinch, tilt, reset on a phone screen).
 - Safari engine: Playwright WebKit was installed in a temp folder (`/private/tmp/claude-501/pw`, may be gone). The iPad itself was checked by the team and works.
-- Slides: `node slides/shots.mjs` recaptures screenshots, `node slides/render.mjs <png-dir>` writes `slides/LIFELINE-slides.pdf`.
+- Slides: `node slides/shots.mjs` recaptures screenshots, `node slides/render.mjs <png-dir>` writes `slides/LIFELINE-slides.pdf`; `node slides/render.mjs <png-dir> submission.html slides/LIFELINE-submission.pdf` writes the submission deck.
 
 If a change makes a check fail, fix the change, not the check.
 

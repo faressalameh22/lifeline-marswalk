@@ -1,7 +1,9 @@
+// node slides/render.mjs [png-dir] [page.html] [out.pdf]   (serve the repo on port 8790 first)
 import {launch} from './cdp.mjs';
 import fs from 'node:fs';
+const page=process.argv[3]||'index.html', out=process.argv[4]||'slides/LIFELINE-slides.pdf';
 const b=await launch(9337);
-await b.goto('http://localhost:8790/slides/index.html',1920,1080,1);
+await b.goto('http://localhost:8790/slides/'+page,1920,1080,1);
 await b.evalJS('document.fonts.ready.then(()=>1)'); await b.sleep(800);
 const n=await b.evalJS('document.querySelectorAll(".s").length');
 // overflow check: any element extending past its slide
@@ -9,5 +11,5 @@ console.log('slides',n, await b.evalJS(`JSON.stringify([...document.querySelecto
 const dir=process.argv[2]||'slides/png'; fs.mkdirSync(dir,{recursive:true});
 for(let i=0;i<n;i++){const r=await b.rect(`.s:nth-of-type(${i+1})`);await b.shotRect(`${dir}/slide-${i+1}.png`,r)}
 const pdf=await b.send('Page.printToPDF',{preferCSSPageSize:true,printBackground:true});
-fs.writeFileSync('slides/LIFELINE-slides.pdf',Buffer.from(pdf.data,'base64'));
+fs.writeFileSync(out,Buffer.from(pdf.data,'base64'));
 b.close();
