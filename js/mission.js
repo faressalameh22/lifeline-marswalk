@@ -11,4 +11,6 @@ var MISSION={
 };
 // Defaults shown in the Model panel. Sources: Apollo traverse planning (rates, 20% pad, 0.95 h emergency oxygen, 10 km/h emergency rover).
 // Walking speed, suit capacities, payload effect, time in suit and storm warning time are team assumptions (see README).
-var DEFAULTS={speed:2.5,o2:8,h2o:7.5,emerg:57,pad:20,gate:30,load:10,slope:25,sand:40,rover:8,roverE:10,station:45,warn:30,maxh:4.25};
+// NASA xEVA System Concept of Operations, EVA-EXP-0042 Rev B (2020): walking ~2 km/h on level regolith (p. 40);
+// suit supports EVAs of up to 8 h, nominal 6 h (6 +/- 2 h) (pp. 29, 36). Station time 30 min is a team choice.
+var DEFAULTS={speed:2.0,o2:8,h2o:8,emerg:57,pad:20,gate:30,load:10,slope:25,sand:40,rover:8,roverE:10,station:30,warn:30,maxh:6,start:8};  // start: EVA start, hours of Mars local time (team choice)

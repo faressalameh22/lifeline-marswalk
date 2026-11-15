@@ -2,7 +2,7 @@
 // Loads the same data and model files the page loads, then runs every check in the Validation panel.
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.join(__dirname,'..');
-const files=['data/terrain.js','data/rover-track.js','js/mission.js','js/model.js'];
+const files=['data/terrain.js','data/rover-track.js','data/rems-weather.js','js/mission.js','js/model.js'];
 const harness=`
 (function(){
   const p=Object.assign({},DEFAULTS),D=derived(p),F=buildFields(p,STOPS),E=evaluateDesign(F,p,D,STOPS);

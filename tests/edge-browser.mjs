@@ -21,8 +21,8 @@ const check=async(label)=>{process.stdout.write('.');
   const r=await b.evalJS(`(()=>{
     const txt=document.body.innerText;
     const bad=['NaN','undefined','Infinity','null'].filter(w=>new RegExp('\\\\b'+w+'\\\\b').test(txt));
-    const ids=['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax'];
-    const keys=['speed','o2','h2o','emerg','pad','gate','load','slope','sand','rover','roverE','station','warn','maxh'];
+    const ids=['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax','pStart'];
+    const keys=['speed','o2','h2o','emerg','pad','gate','load','slope','sand','rover','roverE','station','warn','maxh','start'];
     const p={};ids.forEach((id,k)=>{const el=document.getElementById(id);const v=parseFloat(el.value);p[keys[k]]=isFinite(v)?v:parseFloat(el.defaultValue)});
     const shown=document.getElementById('verdict').textContent.trim();
     return {bad,shown,p};
@@ -39,7 +39,7 @@ const check=async(label)=>{process.stdout.write('.');
   return {shown:r.shown,o};
 };
 const setInput=(id,v)=>b.evalJS(`(()=>{const e=document.getElementById('${id}');e.value=${JSON.stringify(String(v))};e.dispatchEvent(new Event('change',{bubbles:true}));return 1})()`);
-const resetInputs=()=>b.evalJS(`(()=>{['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax'].forEach(id=>{const e=document.getElementById(id);if(e.value!==e.defaultValue){e.value=e.defaultValue;e.dispatchEvent(new Event('change',{bubbles:true}))}});document.getElementById('clear').click();return 1})()`);
+const resetInputs=()=>b.evalJS(`(()=>{['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax','pStart'].forEach(id=>{const e=document.getElementById(id);if(e.value!==e.defaultValue){e.value=e.defaultValue;e.dispatchEvent(new Event('change',{bubbles:true}))}});document.getElementById('clear').click();return 1})()`);
 const crisis=(name)=>b.evalJS(`[...document.querySelectorAll('[data-cr]')].find(x=>x.dataset.cr==='${name}').click()`);
 const slider=(v)=>b.evalJS(`(()=>{const s=document.getElementById('tSlider');s.value=${v};s.dispatchEvent(new Event('input',{bubbles:true}));return +s.max})()`);
 const sweep=async(label,step=7)=>{const max=await slider(0);for(let t=0;t<=max;t+=step){await slider(t);const r=await b.evalJS(`document.body.innerText.match(/\\b(NaN|undefined|Infinity)\\b/)?.[0]||''`);if(r){problems.push(`[${label} t=${t}] page text contains ${r}`);break}}await slider(Math.min(40,max))};
@@ -55,7 +55,7 @@ await b.evalJS(`document.getElementById('modeWalk').click()`);for(const n of nam
 for(const t of [0,40,100,150,200]){await b.evalJS(`document.getElementById('clear').click()`);await slider(t);for(let k=0;k<12;k++){await b.evalJS(`document.getElementById('late').click()`);await check(`late x${k+1} at t=${t}`)}await sweep(`late x12 at t=${t}`)}
 await b.evalJS(`document.getElementById('clear').click()`);
 // 4. assumption inputs: min, max, beyond, empty, negative, text
-const lims=await b.evalJS(`JSON.stringify(['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax'].map(id=>{const e=document.getElementById(id);return [id,+e.min,+e.max]}))`);
+const lims=await b.evalJS(`JSON.stringify(['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax','pStart'].map(id=>{const e=document.getElementById(id);return [id,+e.min,+e.max]}))`);
 for(const [id,mn,mx] of JSON.parse(lims)){
   for(const v of [mn,mx,0,-5,mx*10,'','1e9',mn-0.01,mx+0.01]){await setInput(id,v);await check(`${id}=${JSON.stringify(v)}`);}
   await resetInputs();

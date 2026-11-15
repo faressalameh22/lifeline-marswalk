@@ -2,7 +2,7 @@
 // Loads the same files as the page. Prints the results; compare them with README, SUBMISSION.md and the slides.
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.join(__dirname,'..');
-const files=['data/terrain.js','data/rover-track.js','js/mission.js','js/model.js'];
+const files=['data/terrain.js','data/rover-track.js','data/rems-weather.js','js/mission.js','js/model.js'];
 const harness=`
 (function(){
   const p=Object.assign({},DEFAULTS),D=derived(p),F=buildFields(p,STOPS),E=evaluateDesign(F,p,D,STOPS);

@@ -174,12 +174,12 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
     <div id="verdict" class="verdict safe-c">GO FOR EVA</div>
   </header>
 
-  <div class="notice"><b>Real data.</b> Terrain: 30 m HRSC elevation map of Gale crater (ESA Mars Express; Persaud et al. 2021, CC BY 4.0). Curiosity’s track and stops A and B: NASA’s MSL waypoint file. The habitat sits on Curiosity’s sol 3038 position; stop C is a new site chosen inside the boxwork. Stop photos: Curiosity Mastcam and Hazcam (A, B) and an orbital HiRISE view (C). Weather: Curiosity REMS readings for the boxwork sols. Rates and limits come from Apollo planning and are labelled below.</div>
+  <div class="notice"><b>Real data.</b> Terrain: 30 m HRSC elevation map of Gale crater (ESA Mars Express; Persaud et al. 2021, CC BY 4.0). Curiosity’s track and stops A and B: NASA’s MSL waypoint file. The habitat sits on Curiosity’s sol 3038 position; stop C is a new site chosen inside the boxwork. Stop photos: Curiosity Mastcam and Hazcam (A, B) and an orbital HiRISE view (C). Weather and daylight: Curiosity REMS readings for the boxwork sols. Rates and limits come from Apollo and NASA Artemis suit planning and are labelled below.</div>
 
   <div class="try" aria-label="Try it">
     <span><b>1</b>Drag the time slider</span>
     <span><b>2</b>Press Rover fails</span>
-    <span><b>3</b>Press Running late three times and watch the gate send the crew home</span>
+    <span><b>3</b>Press Running late and watch the gate switch to plan B</span>
     <span><b>4</b>Drag stop C far away and read why it says NO-GO</span>
   </div>
 
@@ -210,6 +210,8 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
       <h2 style="margin-top:12px">Environment</h2>
       <div class="env small">
         <div><span>Dose rate (RAD)</span><span>0.64 ± 0.12 mSv/day</span></div>
+        <div><span>Dose on this walk</span><span id="radWalk">no data</span></div>
+        <div><span>Daylight (REMS)</span><span id="dayWin">no data</span></div>
         <div><span>Air temperature (REMS)</span><span id="remsT">no data</span></div>
         <div><span>Air pressure (REMS)</span><span id="remsP">no data</span></div>
         <div><span>Sky (REMS feed)</span><span id="remsS">no data</span></div>
@@ -272,9 +274,9 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
   <section class="card model">
     <h2>Model and assumptions</h2>
     <div class="params">
-      <label for="pSpeed">Walking speed, flat (km/h)<input id="pSpeed" type="number" min="0.5" max="6" step="0.1" value="2.5"></label>
+      <label for="pSpeed">Walking speed, flat (km/h)<input id="pSpeed" type="number" min="0.5" max="6" step="0.1" value="2"></label>
       <label for="pO2">Suit oxygen at start (h, nominal work)<input id="pO2" type="number" min="2" max="12" step="0.5" value="8"></label>
-      <label for="pH2O">Cooling water at start (h, nominal work)<input id="pH2O" type="number" min="2" max="12" step="0.5" value="7.5"></label>
+      <label for="pH2O">Cooling water at start (h, nominal work)<input id="pH2O" type="number" min="2" max="12" step="0.5" value="8"></label>
       <label for="pEmerg">Emergency oxygen (min)<input id="pEmerg" type="number" min="10" max="180" step="1" value="57"></label>
       <label for="pPad">Safety pad (%)<input id="pPad" type="number" min="0" max="60" step="5" value="20"></label>
       <label for="pGate">Gate: minimum margin to continue (min)<input id="pGate" type="number" min="0" max="120" step="5" value="30"></label>
@@ -283,8 +285,9 @@ canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none}
       <label for="pSand">Walking slowdown on sand (%)<input id="pSand" type="number" min="0" max="80" step="5" value="40"></label>
       <label for="pRover">Rover speed (km/h)<input id="pRover" type="number" min="2" max="20" step="1" value="8"></label>
       <label for="pRoverE">Rover emergency speed (km/h)<input id="pRoverE" type="number" min="2" max="20" step="1" value="10"></label>
-      <label for="pStation">Time at each stop (min)<input id="pStation" type="number" min="5" max="180" step="5" value="45"></label>
-      <label for="pMax">Max time in suit (h)<input id="pMax" type="number" min="2" max="10" step="0.25" value="4.25"></label>
+      <label for="pStation">Time at each stop (min)<input id="pStation" type="number" min="5" max="180" step="5" value="30"></label>
+      <label for="pMax">Max time in suit (h)<input id="pMax" type="number" min="2" max="10" step="0.25" value="6"></label>
+      <label for="pStart">EVA start (Mars local time, hours)<input id="pStart" type="number" min="0" max="23.5" step="0.25" value="8"></label>
       <label for="pWarn">Storm warning time (min)<input id="pWarn" type="number" min="5" max="180" step="5" value="30"></label>
     </div>
     <div class="formula">walk_speed(cell)  = flat_speed × e^(−0.045·slope°) × sand_factor × load_factor     impassable above the slope limit   [slope term: team assumption]
@@ -298,13 +301,14 @@ GO                = all three hold along the whole plan;   gates: margin &lt; ga
     <h3 class="refs-h">Where each value comes from</h3>
     <ul class="refs">
       <li><b>Sourced, Apollo [1]:</b> activity rates 700 / 1050 / 1200 BTU/h for riding, station work and walking (p. 1, items 5–7; used here as 0.67 / 1.00 / 1.14 of station work); 20% pad on the emergency walk back (p. 1, item 8); rover 8 km/h nominal and 10 km/h in emergencies (p. 1, item 9); 0.95 h of emergency oxygen for the trip home (p. 1, item 10); 3.1 km walking radius at 3.3 km/h, which the validation panel reproduces (p. 2). [1] applies the 20% pad to the walk back only; LIFELINE also pads the ride back, which is more cautious.</li>
-      <li><b>Sourced, suit [2]:</b> suit oxygen 8 h: NASA's xEMU lunar suit is specified for EVAs of up to 8 h (6 ± 2 h). It is a Moon suit; no Mars suit figure exists yet.</li>
+      <li><b>Sourced, NASA suit planning [2]:</b> walking speed 2 km/h ("Traverses assume an ~2 km/hr walking pace over relatively level regolith", p. 40); suit oxygen and cooling water 8 h, and a nominal EVA of 6 h ("EVAs of up to 8 hours in duration (6±2 hours)", pp. 29 and 36). These are NASA's Artemis (Moon) planning values; no Mars suit figures exist yet.</li>
       <li><b>Sourced, radiation [3]:</b> 0.64 ± 0.12 mSv/day dose equivalent measured by Curiosity’s RAD at Gale Crater (shown for context; not used in the margins).</li>
-      <li><b>Team assumptions, not sourced:</b> walking speed on Mars 2.5 km/h; cooling water 7.5 h (the tightest consumable in the model); the slope slowdown e^(−0.045·slope°); payload effect (−0.5% speed, +1% effort per kg); injured-crew factor (half speed, +30% effort); time in suit 4.25 h; storm warning 30 min. For walking speed, NASA suited tests [4] found a 10 km walk in lunar gravity took 96 min (1.74 m/s), but in Mars gravity subjects neared maximum effort at 1.5 m/s, so a Mars walk must be much slower; 2.5 km/h (0.69 m/s) sits below both, and below Apollo’s 3.3 km/h. The sensitivity chart shows what each assumption costs.</li>
+      <li><b>Sourced, Curiosity REMS:</b> the daylight window: the walk must start after the latest sunrise (05:52) and be home before the earliest sunset (17:22) over the boxwork sols, local mean solar time. Radiation [3] gives the dose for the planned time outside.</li>
+      <li><b>Team choices, not sourced:</b> 30 min at each stop; EVA start 08:00 local time; the slope slowdown e^(−0.045·slope°); payload effect (−0.5% speed, +1% effort per kg); injured-crew factor (half speed, +30% effort); storm warning 30 min. NASA suited tests [4] support a slow walking speed on Mars: a 10 km walk in lunar gravity took 96 min (1.74 m/s), but in Mars gravity subjects neared maximum effort at 1.5 m/s. The sensitivity chart shows what each value costs.</li>
     </ul>
     <ol class="refs small">
       <li>P. Benjamin, <i>Apollo 15 EVA Capability and Constraints Envelopes</i>, Bellcomm memorandum B70 10028 (Case 320), 13 Oct 1970, NASA-CR-111182 (N79-73020). Not in NTRS; first published in NASA’s Apollo Lunar Surface Journal, whose link no longer works: <a href="data/refs/NASA-CR-111182_Apollo15_EVA_Capability_and_Constraints_Envelopes_1970.pdf">copy kept in this project</a> (<a href="https://web.archive.org/web/2019/https://www.hq.nasa.gov/alsj/19790073512_1979073512.pdf">Internet Archive copy of the NASA original</a>).</li>
-      <li>D. Coan, <i>NASA Exploration EVA Integrated HITL Testing and Analogs</i>, NASA JSC, Feb 2021, p. 8: <a href="https://ntrs.nasa.gov/citations/20210000827">NTRS 20210000827</a>.</li>
+      <li>NASA, <i>xEVA System Concept of Operations</i>, EVA-EXP-0042 Rev. B, Oct 2020, pp. 29, 36 and 40: <a href="https://www.nasa.gov/wp-content/uploads/2017/02/eva-exp-0042_xeva_system_con_ops_rev_b_final_dtd_10192020_ref_doc.pdf">nasa.gov PDF</a>.</li>
       <li>D. M. Hassler et al., <i>Mars’ Surface Radiation Environment Measured with the Mars Science Laboratory’s Curiosity Rover</i>, Science 343 (6169), 2014, <a href="https://doi.org/10.1126/science.1244797">doi:10.1126/science.1244797</a>; <a href="https://ntrs.nasa.gov/citations/20180007641">NTRS 20180007641</a>.</li>
       <li>J. R. Norcross et al., <i>Feasibility of Performing a Suited 10-km Ambulation on the Moon: Final Report of the EVA Walkback Test</i>, NASA/TP-2009-214796, Oct 2009 (<a href="https://www.lpi.usra.edu/lunar/artemis/NorcrossEtAl_NASA-TP-2009-214796_EVA%20Walkback%20Test.pdf">PDF</a>); and <i>Metabolic Costs and Biomechanics of Level Ambulation in a Planetary Suit</i>, NASA/TP-2010-216115, Feb 2010 (<a href="https://www.lpi.usra.edu/lunar/artemis/NorcrossEtAl_NASA-TP-2010-216115_PlanetarySuitMetabolicCosts.pdf">PDF</a>).</li>
     </ol>

@@ -18,7 +18,7 @@ Six Seven, Nablus local event (An-Najah University)
 
 ## High-level summary
 
-LIFELINE is a Marswalk planner that applies the Apollo rule "never go farther than you can walk home" to Mars. An EVA planner places science stops on a real map of the boxwork ridges of Mount Sharp in Gale Crater, and LIFELINE checks, at every minute and every place on the route, that the crew can still get home if the rover fails or a suit fails, and that the walk fits the time an astronaut can stay in a suit. It gives one clear answer, GO or NO-GO, explains why, and shows what to change. We tested the plan against 446 simulated failures (a rover failure and a suit failure at each of the 223 minutes) on real terrain: every single failure leaves the crew a safe way home, at every minute of the walk. Two failures at once do not, and the tool shows exactly where.
+LIFELINE is a Marswalk planner that applies the Apollo rule "never go farther than you can walk home" to Mars. An EVA planner places science stops on a real map of the boxwork ridges of Mount Sharp in Gale Crater, and LIFELINE checks, at every minute and every place on the route, that the crew can still get home if the rover fails or a suit fails, and that the walk fits the time an astronaut can stay in a suit. It gives one clear answer, GO or NO-GO, explains why, and shows what to change. We tested the plan against 356 simulated failures (a rover failure and a suit failure at each of the 178 minutes) on real terrain: every single failure leaves the crew a safe way home, at every minute of the walk. Two failures at once do not, and the tool shows exactly where.
 
 ## Detailed description
 
@@ -30,37 +30,37 @@ LIFELINE is a Marswalk planner that applies the Apollo rule "never go farther th
 
 1. Walk-back: if the rover fails, the suit reserve must cover the walk home over real terrain, plus a 20% safety pad.
 2. Ride-back: if a suit fails, the emergency oxygen must cover the padded ride home.
-3. Time in suit: the whole plan must end inside the time limit (4.25 h, a team assumption).
+3. Time and daylight: the whole plan must end inside a 6 h EVA (NASA's nominal suit plan) and before sunset (Curiosity REMS).
 
 **The mission.** The habitat sits on Curiosity's sol 3038 position, chosen because the ground is flat. Stop A (Altadena) and stop B (Monte Grande) are Curiosity drill sites inside the boxwork. Stop C is a new site: a hollow inside the boxwork that Curiosity never reached; its route passes about 60 m away. Wheels struggle on its steep edges; boots do not. No ground image of stop C exists yet. This is why a human goes.
 
 **How it works.** LIFELINE computes the fastest walking time home from every 30 m cell of the terrain (Dijkstra path finding, 8 directions, walking speed reduced on slopes), then tracks how the suit reserve runs down with Apollo activity rates for driving, working and walking. The margin field on the map turns from green to yellow to red as the reserve drops. Decision gates at each stop switch to plan B (skip the lowest-science stop) or plan C (go home) when the margin ahead falls below the gate. A Why GO / Why NO-GO panel names the tightest limit and lists fixes; lowering the safety pad is never offered as a fix.
 
-**What you can try** (live, no login): drag the EVA time slider; press Rover fails, Suit failure, Crew injured or Solar storm (they combine); press Running late three times and watch the gate send the crew home (plan C); drag stop C far away and read why the verdict turns to NO-GO. A Walk view shows what the astronaut would see on a wrist display.
+**What you can try** (live, no login): drag the EVA time slider; press Rover fails, Suit failure, Crew injured or Solar storm (they combine); press Running late and watch the gate switch to plan B; drag stop C far away and read why the verdict turns to NO-GO. A Walk view shows what the astronaut would see on a wrist display.
 
-**Results with default assumptions.** The crew visits A, then B, then C. Verdict: GO, margin tight. The full plan takes 3 h 42 against the 4.25 h limit. A suit failure while working at stop B leaves 15 min of emergency oxygen (ride home 35 min, 42 min padded, against 57 min). A rover failure leaves at worst 24 min, under the 30 min gate, so even on time the gate at A drops stop B and sends the crew A → C → home by T+2:55. The tool makes the cost of the order visible: Apollo's farthest-first order would leave 37 min.
+**Results with default values.** The crew visits A, then B, then C. Verdict: GO FOR EVA. The plan takes 2 h 57 against a 6 h EVA, out at 08:00 and home by 10:57 local time, well before sunset at 17:22 (Curiosity REMS). A suit failure while working at stop B leaves 15 min of emergency oxygen (ride home 35 min, 42 min padded, against 57 min). A rover failure leaves at worst 32 min.
 
 | Crisis, tested at every minute of the plan | Worst margin | Unsafe minutes |
 |---|---|---|
-| Rover fails | 24 min | 0 |
+| Rover fails | 32 min | 0 |
 | Suit fails | 15 min | 0 |
 | Solar storm | 23 min | 0 |
-| Crew member injured (rover works) | more than 6 h | 0 |
+| Crew member injured (rover works) | more than 8 h | 0 |
 | Suit fails and solar storm | 23 min | 0 |
-| Rover fails and crew member injured | −232 min | 178 |
-| Rover fails and suit fails | −151 min | 199 |
+| Rover fails and crew member injured | −288 min | 136 |
+| Rover fails and suit fails | −203 min | 158 |
 
-Running 15 or 30 min late at stop A, the gates keep plan B (skip B) and the worst walk-back margin stays at 49 and 37 min. At 45 or 60 min late they switch to plan C and send the crew home.
+Running 15 or 30 min late at stop A, the gates switch to plan B (skip B) and the worst walk-back margin stays at 45 and 34 min. At 45 or 60 min late they switch to plan C and send the crew home.
 
 **Validation.** Ten checks run in the page's Validation panel and in a headless test script, and all ten pass:
 
 - With Apollo inputs, the model reproduces Apollo's 3.1 km walking radius (3.12 km).
 - The terrain matches Curiosity's own altitudes at 885 waypoints: RMSE 11.7 m across 823 m of relief.
-- 223 simulated rover failures and 223 simulated suit failures along the plan, all with a safe way home.
+- 178 simulated rover failures and 178 simulated suit failures along the plan, all with a safe way home.
 - The path finder is exact on flat ground and never overestimates by more than the 8.2% bound of an 8-direction grid, always on the safe side.
 - The walk home is never shorter than a straight line (0 violations in 35,139 cells), and the margin never grows while suits run down.
 
-**What we do not know yet.** Walking speed on Mars (2.5 km/h), cooling water capacity (7.5 h), the slope slowdown term, payload and injury effects, time in suit (4.25 h) and storm warning time (30 min) are team assumptions, not sourced numbers. NASA suited tests show walking in Mars gravity is far harder than on the Moon (subjects neared maximum effort at 1.5 m/s), so our 2.5 km/h is deliberately slow, but no measured Mars walking speed exists yet. They matter: with 20% less suit capacity or 20% slower walking, today's plan becomes NO-GO. Every assumption is visible and editable in the tool, and the sensitivity chart shows its effect immediately.
+**Where the numbers come from, and what is still a choice.** Walking speed (2 km/h), suit oxygen and cooling water (8 h) and the 6 h nominal EVA come from NASA's xEVA System Concept of Operations (EVA-EXP-0042, 2020), the Artemis suit plan; no Mars suit figures exist yet. NASA suited tests show walking in Mars gravity is far harder than on the Moon, so a slow pace is the right choice. Still team choices: 30 min per stop, an 08:00 start, the slope slowdown term, payload and injury effects, and a 30 min storm warning. With 20% less suit capacity or 20% slower walking, today's plan becomes NO-GO; every value is editable and its effect shows immediately.
 
 **Impact.** LIFELINE turns a crew's safety margin into a number the crew and the planner can check before and during every Marswalk, on real terrain. The same method works for any landing site with an elevation model. Next steps: a sand layer from THEMIS thermal data, a second rover or support crew to cover double failures, and a helmet display for the walking crew.
 
@@ -70,10 +70,10 @@ Running 15 or 30 min late at stop A, the gates keep plan B (skip B) and the wors
 - **Curiosity Mastcam image**, sol 4564 (8 Jun 2025), raw image 4564ML1077420021801947E01: the Altadena drill hole at stop A. Credit NASA/JPL-Caltech/MSSS.
 - **Curiosity Front Hazcam image**, sol 4687 (12 Oct 2025), raw image FLB_813578617EDR_F1191722FHAZ00302M: stop B at Monte Grande. Credit NASA/JPL-Caltech.
 - **MRO HiRISE image ESP_087149_1750** (28 Feb 2025): orbital view of stop C, a crop of the browse product at about 3 m per pixel. Credit NASA/JPL-Caltech/University of Arizona.
-- **Curiosity REMS weather**, NASA MSL weather feed: daily air temperature (−82 to −5 °C), pressure (679 to 782 Pa) and sky for 123 sols, sols 4564 to 4687, shown in the Environment panel.
-- **Curiosity RAD surface radiation**: 0.64 ± 0.12 mSv/day dose equivalent at Gale Crater (Hassler et al. 2014, Science 343, doi:10.1126/science.1244797; NTRS 20180007641).
+- **Curiosity REMS weather**, NASA MSL weather feed: daily air temperature (−82 to −5 °C), pressure (679 to 782 Pa), sky, and sunrise and sunset for 123 sols, sols 4564 to 4687. Sunrise (latest 05:52) and sunset (earliest 17:22) set the daylight window the plan must fit.
+- **Curiosity RAD surface radiation**: 0.64 ± 0.12 mSv/day dose equivalent at Gale Crater (Hassler et al. 2014, Science 343, doi:10.1126/science.1244797; NTRS 20180007641); LIFELINE shows the dose for the planned time outside (about 0.08 mSv for 2 h 57).
 - **Apollo traverse planning**: P. Benjamin, *Apollo 15 EVA Capability and Constraints Envelopes*, Bellcomm memorandum B70 10028, 13 Oct 1970, NASA-CR-111182 (N79-73020), first published in NASA's Apollo Lunar Surface Journal; a copy is kept at https://faressalameh22.github.io/lifeline-marswalk/data/refs/NASA-CR-111182_Apollo15_EVA_Capability_and_Constraints_Envelopes_1970.pdf and in the Internet Archive. Source of the activity rates (700/1050/1200 BTU/h), the 20% pad, the 8 and 10 km/h rover speeds, the 0.95 h of emergency oxygen (p. 1) and the 3.1 km walking radius used for validation (p. 2).
-- **xEMU suit**: NASA's lunar suit is specified for EVAs of up to 8 h (6 ± 2 h) (Coan, NASA JSC 2021, NTRS 20210000827); source of the 8 h suit oxygen.
+- **NASA xEVA System Concept of Operations**, EVA-EXP-0042 Rev. B (Oct 2020): walking pace ~2 km/h on level regolith (p. 40), suit supports EVAs of up to 8 h, nominal 6 ± 2 h (pp. 29, 36). Source of the walking speed, suit oxygen and cooling water, and EVA length.
 - **NASA suited walking tests**: Norcross et al., NASA/TP-2009-214796 (2009) and NASA/TP-2010-216115 (2010), used as context for the walking-speed assumption.
 
 ## Space Agency Partner and other data

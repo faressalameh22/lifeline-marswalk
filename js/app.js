@@ -6,8 +6,8 @@ if(typeof document!=='undefined')(function(){
   const cv=$('map'),ctx=cv.getContext('2d',{willReadFrequently:true}),S=cv.width/W; // CPU canvas: the 3D view reads it as a texture without a GPU stall
   const off=document.createElement('canvas');off.width=W;off.height=H;const octx=off.getContext('2d');
   const state={t:40,cr:{rover:false,suit:false,injured:false,storm:false},delays:{},mode:'plan',sel:'C',probe:null,drag:null,moved:false};
-  const IDS=['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax'];
-  const KEYS=['speed','o2','h2o','emerg','pad','gate','load','slope','sand','rover','roverE','station','warn','maxh'];
+  const IDS=['pSpeed','pO2','pH2O','pEmerg','pPad','pGate','pLoad','pSlope','pSand','pRover','pRoverE','pStation','pWarn','pMax','pStart'];
+  const KEYS=['speed','o2','h2o','emerg','pad','gate','load','slope','sand','rover','roverE','station','warn','maxh','start'];
   // Read the assumption inputs. Empty or non-numeric text falls back to the default; values outside the
   // input's min/max are clamped and written back, so a typed 0, negative or huge value can never reach the model.
   const params=()=>{const o={};IDS.forEach((id,k)=>{const el=$(id);let v=parseFloat(el.value);if(!isFinite(v))v=parseFloat(el.defaultValue);
@@ -169,7 +169,7 @@ if(typeof document!=='undefined')(function(){
     const sl=segLabel(b.seg),where=sl.charAt(0).toLowerCase()+sl.slice(1),when=fmtClock(b.t);
     let reason;
     if(!isFinite(E.minM))reason='A stop cannot be reached over passable terrain. Move it or raise the slope limit.';
-    else if(E.binding==='time')reason=`The plan keeps the crew in their suits for ${fmtDur(E.end)}. The limit is ${p.maxh} h, leaving ${fmtDur(E.timeSpare)}.`;
+    else if(E.binding==='time')reason=E.timeKind==='sunrise'?`The walk starts at ${fmtLocal(p.start*60)}, before sunrise at ${fmtLocal(DAYLIGHT.sunrise)} (Curiosity REMS), by ${fmtDur(-E.timeSpare)}.`:E.timeKind==='sunset'?`The crew is out for ${fmtDur(E.end)} from ${fmtLocal(p.start*60)}; sunset is at ${fmtLocal(DAYLIGHT.sunset)} (Curiosity REMS), leaving ${fmtDur(E.timeSpare)} of daylight.`:`The plan keeps the crew in their suits for ${fmtDur(E.end)}. The limit is ${p.maxh} h, leaving ${fmtDur(E.timeSpare)}.`;
     else if(E.binding==='ride')reason=`If a suit fails while ${where} (${when}), the ride home takes ${fmtDur(F.rHome.time[b.cell]/p.roverE)}, padded to ${fmtDur(D.pad*F.rHome.time[b.cell]/p.roverE)}. Emergency oxygen lasts ${p.emerg} min.`;
     else reason=`If the rover fails while ${where} (${when}), the walk home takes ${fmtDur(F.wHome.time[b.cell]/D.walkSpeed)}, padded to ${fmtDur(D.pad*F.wHome.time[b.cell]/D.walkSpeed)}. The suits have ${fmtDur(b.m+D.pad*F.wHome.time[b.cell]/D.walkSpeed)} of walking left, limited by ${D.limiting}.`;
     const spare=E.binding==='time'?E.timeSpare:b.m;
@@ -207,6 +207,9 @@ if(typeof document!=='undefined')(function(){
     const lateTot=Object.values(state.delays).reduce((a,b)=>a+b,0);$('lateNote').textContent=lateTot?'Delays so far: +'+lateTot+' min':'';
     $('leftCol').style.display=state.mode==='walk'?'none':'';
     if(v3d)v3d.update();
+    // RAD and REMS in the result: surface dose for the planned time outside, and the daylight window the plan must fit
+    $('radWalk').textContent=isFinite(E.end)?(0.64*E.end/1440).toFixed(2)+' mSv in '+fmtDur(E.end):'no plan';
+    $('dayWin').textContent=DAYLIGHT?fmtLocal(DAYLIGHT.sunrise)+' to '+fmtLocal(DAYLIGHT.sunset):'no data';
   }
 
   $('tSlider').addEventListener('input',e=>{state.t=+e.target.value;render()});

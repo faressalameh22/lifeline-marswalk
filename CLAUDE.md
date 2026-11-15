@@ -87,39 +87,41 @@ No build step. Plain scripts, `var` globals in data/mission files so the test ru
 
 ## Model defaults and which are sourced
 
-Sourced, one document for all Apollo values: P. Benjamin, "Apollo 15 EVA Capability and Constraints Envelopes", Bellcomm memo B70 10028 (Case 320), 13 Oct 1970, NASA-CR-111182 (N79-73020). Not in NTRS; copy in data/refs/NASA-CR-111182_Apollo15_EVA_Capability_and_Constraints_Envelopes_1970.pdf (the NASA ALSJ URL now redirects; Internet Archive copy: https://web.archive.org/web/2019/https://www.hq.nasa.gov/alsj/19790073512_1979073512.pdf). p. 1 items 5-10: 1050 work / 700 riding / 1200 walking BTU/h at 3.3 km/h, 20% pad on emergency walkback (1440 BTU/h), LRV 8 km/h nominal and 10 km/h emergency, 0.95 h of B/SLSS oxygen for travel home. p. 2: 3.1 km walking radius (model reproduces 3.12 km). The memo pads only the walkback; LIFELINE also pads the rideback (more cautious) and says so on the page.
-Suit oxygen 8 h: xEMU "supports EVAs of up to 8 hours (6±2)", Coan, NASA JSC Feb 2021, p. 8, NTRS 20210000827 (lunar suit).
-Radiation: 0.64 ± 0.12 mSv/day (Hassler et al. 2014, Science 343, doi:10.1126/science.1244797, NTRS 20180007641). Display only. 0.67 was a 2013 press-release figure; do not use it.
+Defaults changed 15 Nov (team decision) to NASA-sourced suit values: walking 2.0 km/h, O2 8 h, cooling water 8 h, nominal EVA 6 h, from NASA xEVA System Concept of Operations EVA-EXP-0042 Rev B (Oct 2020): p. 40 "Traverses assume an ~2 km/hr walking pace over relatively level regolith"; pp. 29, 36 "EVAs of up to 8 hours in duration (6±2 hours)". Station time 30 min (team choice). EVA start 08:00 local mean solar time (team choice).
 
-**Team assumptions, still unsourced (labelled as such on the page):** walking speed 2.5 km/h, cooling water 7.5 h (the binding consumable), slope term e^(-0.045 slope), payload effect, injured factor, 4.25 h time in suit, 30 min storm warning. Context for walking speed: NASA/TP-2009-214796 (10 km suited walk in lunar g took 96 min, 1.74 m/s; in Mars g subjects neared max effort at 1.5 m/s) and NASA/TP-2010-216115.
+Apollo values, one document: P. Benjamin, "Apollo 15 EVA Capability and Constraints Envelopes", Bellcomm memo B70 10028 (Case 320), 13 Oct 1970, NASA-CR-111182 (N79-73020); copy in data/refs/. p. 1 items 5-10: 1050/700/1200 BTU/h, 20% pad on walkback, LRV 8 and 10 km/h, 0.95 h B/SLSS O2. p. 2: 3.1 km radius (model 3.12). LIFELINE also pads the rideback (more cautious).
 
-Sensitivity on real terrain (A→B→C): −20% suit capacity → margin −48 min (NO-GO); −20% walking speed → −27 min (NO-GO).
+REMS: daylight window from the same feed (sunrise/sunset added to data/rems-weather.js): latest sunrise 05:52, earliest sunset 17:22 over sols 4564-4687; the plan must start after sunrise and end before sunset (model: endLimit / startsBeforeSunrise). RAD: 0.64 ± 0.12 mSv/day (Hassler 2014), shown as the dose for the planned time outside.
 
-## Current results (default assumptions)
+Still team choices: station 30 min, start 08:00, slope term e^(-0.045 slope), payload effect, injured factor, 30 min storm warning.
 
-Visit order is always A → B → C (team decision 15 Nov, replacing Apollo's farthest-first; the gates still check every minute). Verdict GO, MARGIN TIGHT. Full plan A→B→C: 3 h 42 vs 4.25 h; rover-failure worst case 24 min (below the 30 min gate); suit failure at stop B: ride home 35 min (padded 42) vs 57 min emergency O2 → 15 min spare. Because the margin ahead at A is 23 min (< 30 min gate), even on time the gate at A drops B (plan B: A → C → home by T+2:55). Team chose to keep the 30 min gate. Farthest-first (B, C, A) gave 37 min; that comparison is a good story: the tool shows the cost of the order.
+Sensitivity (current defaults): −20% suit capacity → −44 min (NO-GO); −20% walking speed → −31 min (NO-GO).
 
-## Failure evaluation (real terrain, default assumptions, every minute of the 223-minute plan)
+## Current results (default values, verified with tests/audit-numbers.js)
+
+Visit order always A → B → C (team decision). Verdict GO FOR EVA. Plan 2 h 57 (out 08:00, home 10:57, sunset 17:22) vs 6 h EVA. Worst rover failure 32 min; suit failure at stop B: ride 35 min (padded 42) vs 57 min → 15 min. All three stops visited on time.
+
+## Failure evaluation (real terrain, default values, every minute of the 178-minute plan)
 
 | Crisis | Worst margin | Unsafe minutes |
 |---|---|---|
-| Rover fails | 24 min | 0 |
+| Rover fails | 32 min | 0 |
 | Suit fails | 15 min | 0 |
 | Solar storm | 23 min | 0 |
-| Crew injured (rover works) | > 6 h | 0 |
+| Crew injured (rover works) | > 8 h | 0 |
 | Suit fails + storm | 23 min | 0 |
-| Rover fails + injured | −232 min | 178 |
-| Rover fails + suit fails | −151 min | 199 |
+| Rover fails + injured | −288 min | 136 |
+| Rover fails + suit fails | −203 min | 158 |
 
 | Late at stop A | Gate decision | Home by | Worst walk-back margin |
 |---|---|---|---|
-| on time | Plan B (skip B) | T+2:55 | 61 min |
-| 15 min | Plan B (skip B) | T+3:10 | 49 min |
-| 30 min | Plan B | T+3:25 | 37 min |
-| 45 min | Plan C (go home) | T+2:49 | 77 min |
-| 60 min | Plan C | T+3:04 | 65 min |
+| on time | Plan A (all stops) | T+2:57 | 32 min |
+| 15 min | Plan B (skip B) | T+2:40 | 45 min |
+| 30 min | Plan B | T+2:55 | 34 min |
+| 45 min | Plan C (go home) | T+2:34 | 66 min |
+| 60 min | Plan C | T+2:49 | 54 min |
 
-Message for the slides: every single failure is covered at every minute; two failures at once are not, as in Apollo planning, and the tool shows exactly where. Future work: second rover or support crew.
+356 simulated single failures (178 rover + 178 suit), all survivable. Message for the slides: every single failure is covered at every minute; two failures at once are not, as in Apollo planning, and the tool shows exactly where. Future work: second rover or support crew.
 
 ## Data actually used vs planned
 

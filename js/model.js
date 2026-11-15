@@ -9,6 +9,17 @@ const STOPS=MISSION.stops;
 for(const s of STOPS){const p=toXY(s.lat,s.lon);s.x=p.x;s.y=p.y}
 const TRACK=ROVER.map(r=>{const p=toXY(r[0],r[1]);return [p.x,p.y]}).filter(p=>p[0]>=0&&p[0]<W&&p[1]>=0&&p[1]<H);
 const RATE={drive:700/1050,work:1,walk:1200/1050};
+// Daylight window from Curiosity REMS (data/rems-weather.js): the latest sunrise and the earliest sunset over the
+// boxwork sols (local mean solar time). The walk must start after sunrise and be home before sunset.
+const toMin=s=>{const m=/^(\d\d):(\d\d)$/.exec(s||'');return m?(+m[1])*60+(+m[2]):NaN};
+const DAYLIGHT=(typeof REMS!=='undefined'&&REMS.cols.indexOf('sunset')>=0)?(()=>{const i=REMS.cols.indexOf('sunrise'),j=REMS.cols.indexOf('sunset');
+  const sr=REMS.rows.map(r=>toMin(r[i])).filter(isFinite),ss=REMS.rows.map(r=>toMin(r[j])).filter(isFinite);
+  return sr.length&&ss.length?{sunrise:Math.max(...sr),sunset:Math.min(...ss)}:null})():null;
+const fmtLocal=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(Math.round(m%60)).padStart(2,'0');
+// Latest allowed return (minutes after EVA start): the suit limit, or sunset if that comes first.
+function endLimit(p){let lim=p.maxh*60;if(DAYLIGHT&&isFinite(p.start))lim=Math.min(lim,DAYLIGHT.sunset-p.start*60);return lim}
+function sunsetFirst(p){return !!(DAYLIGHT&&isFinite(p.start)&&DAYLIGHT.sunset-p.start*60<p.maxh*60)}
+function startsBeforeSunrise(p){return DAYLIGHT&&isFinite(p.start)?Math.max(0,DAYLIGHT.sunrise-p.start*60):0}
 
 function smooth(v){v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)}
 function hash(x,y){const s=Math.sin(x*127.1+y*311.7)*43758.5453;return s-Math.floor(s)}
@@ -129,12 +140,12 @@ function execute(F,p,D,stops,delays){
     const used=consumed(segs,t),here=walkMargin(F,p,D,pos,used);
     if(here<p.gate){plan='C';switches.push({t,plan});gates.push({t,stop:s,cls:'ab',text:`Leaving ${s.id} at ${fmtClock(t)}: margin here is ${fmtDur(here)}, under the gate. Plan C: drive home now.`});list=[];break}
     const fut=simulate(F,p,pos,t,list,delays),sc=scan(F,p,D,fut,t,used).worst,endT=fut[fut.length-1].t1;
-    if(sc.m>=p.gate&&endT<=p.maxh*60){gates.push({t,stop:s,cls:'ok',text:`Leaving ${s.id} at ${fmtClock(t)}: margin ${fmtDur(sc.m)}, home by ${fmtClock(endT)}. Continue plan ${plan}.`});continue}
-    const why=sc.m<p.gate?`margin ahead drops to ${fmtDur(sc.m)}`:`home by ${fmtClock(endT)} is past the ${p.maxh} h suit limit`;
+    if(sc.m>=p.gate&&endT<=endLimit(p)){gates.push({t,stop:s,cls:'ok',text:`Leaving ${s.id} at ${fmtClock(t)}: margin ${fmtDur(sc.m)}, home by ${fmtClock(endT)}. Continue plan ${plan}.`});continue}
+    const why=sc.m<p.gate?`margin ahead drops to ${fmtDur(sc.m)}`:sunsetFirst(p)?`home by ${fmtClock(endT)} is after sunset (${fmtLocal(DAYLIGHT.sunset)} local time)`:`home by ${fmtClock(endT)} is past the ${p.maxh} h suit limit`;
     const low=[...list].sort((a,b)=>a.value-b.value)[0],rest=list.filter(x=>x!==low);
     if(rest.length){
       const fut2=simulate(F,p,pos,t,rest,delays),sc2=scan(F,p,D,fut2,t,used).worst,end2=fut2[fut2.length-1].t1;
-      if(sc2.m>=p.gate&&end2<=p.maxh*60){plan='B';switches.push({t,plan});list=rest;gates.push({t,stop:s,cls:'sw2',text:`Leaving ${s.id} at ${fmtClock(t)}: ${why}. Plan B: skip stop ${low.id} (lowest science), home by ${fmtClock(end2)}.`});continue}
+      if(sc2.m>=p.gate&&end2<=endLimit(p)){plan='B';switches.push({t,plan});list=rest;gates.push({t,stop:s,cls:'sw2',text:`Leaving ${s.id} at ${fmtClock(t)}: ${why}. Plan B: skip stop ${low.id} (lowest science), home by ${fmtClock(end2)}.`});continue}
     }
     plan='C';switches.push({t,plan});gates.push({t,stop:s,cls:'ab',text:`Leaving ${s.id} at ${fmtClock(t)}: ${why}. Plan C: drive home now.`});list=[];
   }
@@ -144,12 +155,13 @@ function execute(F,p,D,stops,delays){
 
 function evaluateDesign(F,p,D,stops){
   const segs=simulate(F,p,cellXY(HAB.x,HAB.y),0,visitOrder(F,stops),{});
-  const sc=scan(F,p,D,segs,0,0),end=segs[segs.length-1].t1,timeSpare=p.maxh*60-end;
+  const sc=scan(F,p,D,segs,0,0),end=segs[segs.length-1].t1,early=startsBeforeSunrise(p),timeSpare=early>0?-early:endLimit(p)-end;
+  const timeKind=early>0?'sunrise':sunsetFirst(p)?'sunset':'suit';
   const slack=[['walk',sc.worst.m-p.gate,sc.worst.m],['ride',sc.ride.m-10,sc.ride.m],['time',timeSpare-15,timeSpare]].sort((a,b)=>a[1]-b[1]);
   const minM=Math.min(sc.worst.m,sc.ride.m,timeSpare);
   const g=!isFinite(minM)||minM<0?'danger':slack[0][1]<0?'tight':'safe';
   const bind=minM<0?[['walk',sc.worst.m],['ride',sc.ride.m],['time',timeSpare]].sort((a,b)=>a[1]-b[1])[0][0]:slack[0][0];
-  return {segs,sc,minM,timeSpare,end,grade:g,binding:bind};
+  return {segs,sc,minM,timeSpare,timeKind,end,grade:g,binding:bind};
 }
 function grade(m,gate){return m<0?'danger':m<gate?'tight':'safe'}
 function fmtDur(m){if(!isFinite(m))return m>0?'none':'no path';const neg=m<0;m=Math.round(Math.abs(m));const h=Math.floor(m/60),mm=m%60;return (neg?'−':'')+(h?h+' h '+String(mm).padStart(2,'0'):mm+' min')}
@@ -172,14 +184,15 @@ function planChecks(F,p,D,E){
   const done=isFinite(E.end),cant='Not run: with these settings a stop or the habitat cannot be reached, so the plan cannot be completed.';
   out.push({ok:done&&E.sc.worst.m>=0,t:'Rover failure tested at every minute',d:done?`${mins} simulated failures along the plan. Worst case: ${fmtDur(E.sc.worst.m)} spare.`:cant});
   out.push({ok:done&&E.sc.ride.m>=0,t:'Suit failure tested at every minute',d:done?`${mins} simulated failures. Worst case: ${fmtDur(E.sc.ride.m)} of emergency oxygen left on arrival.`:cant});
-  out.push({ok:done&&E.timeSpare>=0,t:'Plan fits the time-in-suit limit',d:done?`${fmtDur(E.end)} planned against a ${p.maxh} h limit.`:cant});
+  const day=DAYLIGHT&&isFinite(p.start)?` Daylight (Curiosity REMS): out at ${fmtLocal(p.start*60)}, home by ${fmtLocal(p.start*60+E.end)}, sunrise ${fmtLocal(DAYLIGHT.sunrise)}, sunset ${fmtLocal(DAYLIGHT.sunset)}.`:'';
+  out.push({ok:done&&E.timeSpare>=0,t:'Plan fits the time-in-suit limit and daylight',d:done?`${fmtDur(E.end)} planned against a ${p.maxh} h limit.${day}`:cant});
   let mono=true,prev=Infinity;const ci=cellXY(STOPS[0].x,STOPS[0].y);const tEnd=done?E.end:p.maxh*60; // never loop to an infinite plan end
   for(let t=0;t<=tEnd;t+=5){const m=walkMargin(F,p,D,ci,consumed(E.segs,t));if(m>prev+1e-9)mono=false;prev=m}
   out.push({ok:mono,t:'Margin never grows while the suits run down',d:'Checked every 5 minutes at a fixed point.'});
   let bad=0,hc=cellXY(HAB.x,HAB.y),hx=HAB.x,hy=HAB.y;for(let i=0;i<W*H;i++){if(!isFinite(F.wHome.time[i]))continue;const d=Math.hypot((i%W)-hx,Math.floor(i/W)-hy)*CELL/1000*60;if(F.wHome.time[i]<d-1e-6)bad++}
   out.push({ok:bad===0,t:'Walk home is never shorter than a straight line',d:`Checked all ${W*H} cells: ${bad} violations.`});
   const first=visitOrder(F,STOPS)[0],X2=execute(F,p,D,STOPS,{[first.id]:30}),sc2=scan(F,p,D,X2.segs,0,0).worst,pl=X2.switches[X2.switches.length-1].plan;
-  out.push({ok:isFinite(X2.end)&&sc2.m>=0&&X2.end<=p.maxh*60,t:'Running 30 min late stays safe',d:isFinite(X2.end)?`+30 min at stop ${first.id}: gates choose plan ${pl}, home by ${fmtClock(X2.end)}, worst margin ${fmtDur(sc2.m)}.`:cant});
+  out.push({ok:isFinite(X2.end)&&sc2.m>=0&&X2.end<=endLimit(p),t:'Running 30 min late stays safe',d:isFinite(X2.end)?`+30 min at stop ${first.id}: gates choose plan ${pl}, home by ${fmtClock(X2.end)}, worst margin ${fmtDur(sc2.m)}.`:cant});
   return out;
 }
 function sensitivity(F,p,stops){
