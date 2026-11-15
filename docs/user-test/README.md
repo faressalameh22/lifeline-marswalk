@@ -4,6 +4,9 @@ Goal: find out, with real people, whether someone who has never seen LIFELINE ca
 
 ## Who
 
+Space Apps rules: do not record or publish names, voices or likenesses of anyone under 18. Quote only adults (18+) who agree in writing that NASA may use their name; otherwise report results without names. Do not collect birthdays, addresses or phone numbers.
+
+
 3 to 5 people who have not worked on LIFELINE: students, a lecturer, anyone. Ask each one first:
 
 > "We are testing a student project for NASA Space Apps. It takes five minutes. We will note your answers and the time, but not your name unless you say we may use it. Is that OK?"

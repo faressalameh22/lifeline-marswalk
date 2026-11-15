@@ -5,7 +5,7 @@ Read this first. It carries every decision made so far, so you do not need to re
 ## Who and when
 
 - Team **Six Seven** (5 people, 3 laptops, 1 iPad), NASA Space Apps Challenge 2026, **Nablus local event** (An-Najah University).
-- Team contact: Iyad. **Talk to the team in Arabic.** Everything the judges see (site, README, slides, submission page) is in **English**.
+- **Talk to the team in Arabic.** Do not put team members' names, emails or other personal details in any file (Space Apps rules; names of under-18s must never appear). Everything the judges see (site, README, slides, submission page) is in **English**.
 - Challenge: **Interplanetary Survival Guide: Martian Map** (layered map from several NASA missions to plan a safe Marswalk with new science).
 - Target award category: **Best Mission Concept**. Realistic goal: win locally and be nominated for global judging.
 - **Deadline: Sunday 15 Nov 2026, 23:59 Nablus time (UTC+2).** Plan: first full submission by 16:00, final by 20:00. No new features after Sunday noon.
