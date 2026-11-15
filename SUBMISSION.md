@@ -46,7 +46,7 @@ LIFELINE is a Marswalk planner that applies the Apollo rule "never go farther th
 | Suit fails | 15 min | 0 |
 | Solar storm | 23 min | 0 |
 | Crew member injured (rover works) | more than 8 h | 0 |
-| Suit fails and solar storm | 23 min | 0 |
+| Suit fails and solar storm | 15 min | 0 |
 | Rover fails and crew member injured | −288 min | 136 |
 | Rover fails and suit fails | −203 min | 158 |
 

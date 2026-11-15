@@ -97,9 +97,10 @@ if(typeof document!=='undefined')(function(){
       const c=crisisAt(F,p,D,state.cr,pos.cell,used),g=grade(c.m,p.gate),cr=state.cr;
       let name=[cr.rover&&'Rover failed',cr.suit&&'Suit failure',cr.injured&&'Crew injured',cr.storm&&'Solar storm'].filter(Boolean).join(' + ');
       let cmd,why;
-      if(c.dest==='shelter'){cmd=c.m>=0?'Shelter now':'Shelter now, nearest cover';why=`Nearest terrain shelter is ${fmtDur(c.travel)} away ${c.mode==='ride'?'by rover':'on foot'}. Assumed warning: ${p.warn} min.`}
+      if(c.dest==='shelter'){cmd=c.m>=0?'Shelter now':'Shelter now, nearest cover';why=`Nearest terrain shelter is ${fmtDur(c.travel)} away ${c.mode==='ride'?'by rover':'on foot'}. Assumed warning: ${p.warn} min. Home afterwards: ${fmtDur(c.mHome)} margin.`}
       else if(c.mode==='ride'){cmd=c.m>=0?'Return by rover now':'Return now, reserve will not cover it';why=`${fmtDur(c.travel)} to the habitat at ${p.roverE} km/h. ${cr.suit?'Emergency oxygen: '+p.emerg+' min.':'Reserve: '+fmtDur(c.avail)+'.'}`}
       else{cmd=c.m>=0?'Walk home now':'Walk-back not covered';why=`${fmtDur(c.travel)} on foot${cr.injured?' at half speed':''}. ${cr.suit?'Emergency oxygen: '+p.emerg+' min.':'Reserve: '+fmtDur(c.avail)+'.'}`}
+      if(cr.storm&&c.dest==='home')why+=` Solar storm: nearest shelter ${fmtDur(c.shelterTravel)} away, ${c.shelterTravel<=p.warn?'reachable':'not reachable'} within the ${p.warn} min warning; getting home is the tighter limit.`;
       const plan=cr.suit||cr.storm?'D':'C';
       return {name,cmd,why,m:c.m,g,plan,crisis:true};
     }

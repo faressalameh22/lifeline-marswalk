@@ -109,7 +109,7 @@ Visit order always A → B → C (team decision). Verdict GO FOR EVA. Plan 2 h 5
 | Suit fails | 15 min | 0 |
 | Solar storm | 23 min | 0 |
 | Crew injured (rover works) | > 8 h | 0 |
-| Suit fails + storm | 23 min | 0 |
+| Suit fails + storm | 15 min | 0 |
 | Rover fails + injured | −288 min | 136 |
 | Rover fails + suit fails | −203 min | 158 |
 
@@ -121,7 +121,7 @@ Visit order always A → B → C (team decision). Verdict GO FOR EVA. Plan 2 h 5
 | 45 min | Plan C (go home) | T+2:34 | 66 min |
 | 60 min | Plan C | T+2:49 | 54 min |
 
-356 simulated single failures (178 rover + 178 suit), all survivable. Message for the slides: every single failure is covered at every minute; two failures at once are not, as in Apollo planning, and the tool shows exactly where. Future work: second rover or support crew.
+Crisis logic fixed 15 Nov: a solar storm adds 'reach a shelter before the storm' and never replaces 'get home on the reserve' (a terrain shelter has no oxygen); before, adding a storm could make a double failure look safe. run-tests.js checks that adding any crisis never raises the margin. 356 simulated single failures (178 rover + 178 suit), all survivable. Message for the slides: every single failure is covered at every minute; two failures at once are not, as in Apollo planning, and the tool shows exactly where. Future work: second rover or support crew.
 
 ## Data actually used vs planned
 

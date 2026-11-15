@@ -210,13 +210,16 @@ function sensitivity(F,p,stops){
   return {base,rows};
 }
 
+// Margin (min) if the given crises hit at cell i after `used` minutes of reserve.
+// The crew must always be able to get HOME on the oxygen and water left: a terrain shelter only blocks radiation.
+// A solar storm ADDS a second condition, reaching a shelter before the storm arrives; it never replaces the first,
+// so more crises can never give a bigger margin.
 function crisisAt(F,p,D,cr,i,used){
-  const roverOK=!cr.rover,dest=cr.storm?'shelter':'home';
-  let travel,rate;
-  if(roverOK&&(cr.suit||cr.injured||cr.storm)){travel=(dest==='home'?F.rHome:F.rShel).time[i]/p.roverE;rate=RATE.drive}
-  else{travel=(dest==='home'?F.wHome:F.wShel).time[i]/(D.walkSpeed*(cr.injured?0.5:1));rate=D.walkRate*(cr.injured?1.3:1)}
-  const avail=cr.suit?p.emerg:(D.cap-used)/rate;
-  let m=avail-D.pad*travel;
-  if(cr.storm)m=Math.min(m,p.warn-travel);
-  return {m,travel,avail,mode:roverOK&&(cr.suit||cr.injured||cr.storm)?'ride':'walk',dest};
+  const roverOK=!cr.rover, ride=roverOK&&(cr.suit||cr.injured||cr.storm);
+  const speed=ride?p.roverE:D.walkSpeed*(cr.injured?0.5:1), rate=ride?RATE.drive:D.walkRate*(cr.injured?1.3:1);
+  const homeTravel=(ride?F.rHome:F.wHome).time[i]/speed, avail=cr.suit?p.emerg:(D.cap-used)/rate;
+  const mHome=avail-D.pad*homeTravel;
+  let m=mHome,dest='home',travel=homeTravel,shelterTravel=null,mShelter=null;
+  if(cr.storm){shelterTravel=(ride?F.rShel:F.wShel).time[i]/speed;mShelter=p.warn-shelterTravel;if(mShelter<mHome){m=mShelter;dest='shelter';travel=shelterTravel}}
+  return {m,travel,avail,mode:ride?'ride':'walk',dest,mHome,mShelter,shelterTravel,homeTravel};
 }
