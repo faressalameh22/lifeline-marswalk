@@ -142,7 +142,7 @@ if(typeof document!=='undefined')(function(){
         <div class="tile ${c.g}"><div class="k">${c.crisis?'Margin ('+c.name.toLowerCase()+')':'Margin (rover fails)'}</div><div class="v">${fmtDur(c.m)}</div></div>
         <div class="tile"><div class="k">Home on foot</div><div class="v">${fmtDur(home)}</div></div>
         <div class="tile"><div class="k">Next: ${nt.name} (straight line)</div><div class="v">${nt.km.toFixed(1)} km</div></div>
-        <div class="tile"><div class="k">Turn back by</div><div class="v">${fmtClock(turn)}</div></div>
+        <div class="tile"><div class="k">Turn back by (suit)</div><div class="v">${fmtClock(turn)}</div></div>
         <div class="tile"><div class="k">Active plan</div><div class="v">${c.plan}</div></div></div>
         <p class="small">Same model as the plan view, cut to what a gloved hand can read at a glance.</p>`;
       return;
